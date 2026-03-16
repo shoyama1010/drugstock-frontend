@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SidebarLayout } from "../../components/layout/SidebarLayout";
+// import { SidebarLayout } from "../../components/layout/SidebarLayout";
 import {
   Box,
   Container,
@@ -97,7 +97,7 @@ const mockProducts: Product[] = [
   },
 ];
 
-export function StockIn() {
+export default function StockIn() {
   const [selectedProductId, setSelectedProductId] = useState<number | "">("");
   const [quantity, setQuantity] = useState("");
   const [shelfNumber, setShelfNumber] = useState("");
@@ -155,7 +155,6 @@ export function StockIn() {
   };
 
   return (
-    <SidebarLayout>
       <Container maxWidth='md' sx={{ py: 4 }}>
         {/* ページヘッダー */}
         <Box display='flex' alignItems='center' mb={4}>
@@ -355,6 +354,5 @@ export function StockIn() {
           </Box>
         </Paper>
       </Container>
-    </SidebarLayout>
   );
 }

@@ -7,6 +7,8 @@ import ProductPage from "../features/products/ProductManagementPage";
 import StockPage from "../features/stock/StockManagementPage";
 import TransactionsPage from "../features/transactions/TransactionsPage";
 import StaffManagementPage from "../features/staff/StaffManagementPage";
+import StockInPage from "../features/inbound/StockInPage";
+import StockOutPage from "../features/outbound/StockOutPage";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +40,14 @@ export const router = createBrowserRouter([
         // path: "staff",
         path: "/staff-management",
         element: <StaffManagementPage />,
+      },
+      {
+        path: "stock-in",
+        element: <StockInPage />,
+      },
+      {
+        path: "stock-out",
+        element: <StockOutPage />,
       },
     ],
   },

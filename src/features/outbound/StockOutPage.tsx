@@ -101,7 +101,7 @@ const mockProducts: Product[] = [
   },
 ];
 
-export function StockOut() {
+export default function StockOut() {
   const [selectedProductId, setSelectedProductId] = useState<number | "">("");
   const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
@@ -172,7 +172,6 @@ export function StockOut() {
   };
 
   return (
-  
       <Container maxWidth='md' sx={{ py: 4 }}>
         {/* ページヘッダー */}
         <Box display='flex' alignItems='center' mb={4}>
@@ -535,6 +534,5 @@ export function StockOut() {
           </DialogActions>
         </Dialog>
       </Container>
-  
   );
 }
