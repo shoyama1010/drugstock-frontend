@@ -156,14 +156,16 @@ export default function StaffManagement() {
             <Typography variant='h6' sx={{ flex: 1 }}>
               スタッフ一覧（{staffList.length}名）
             </Typography>
-            <Button
+
+            {/* <Button
               variant='outlined'
               startIcon={<AccountTree />}
               onClick={() => navigate("/staff-auth-flow")}
               sx={{ mr: 2 }}
             >
               認証フロー図
-            </Button>
+            </Button> */}
+
             <Button
               variant='contained'
               startIcon={<Add />}
