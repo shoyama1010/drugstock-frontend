@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../api/clients"; // ← 既に使ってるやつ
+
 import {
   Box,
   Container,
@@ -20,7 +22,8 @@ export default function StaffLogin() {
     "employee",
   );
 
-  const handleLogin = () => {
+  // const handleLogin = () => {
+  const handleLogin = async () => {
     if (!employeeId || !pin) {
       setError("社員番号とPINを入力してください");
       return;
@@ -30,10 +33,27 @@ export default function StaffLogin() {
       setError("PINは4桁で入力してください");
       return;
     }
+    // 認証/開発中
+    try {
+      const res = await api.post("/staff/login", {
+        employee_code: employeeId,
+        pin: pin,
+      });
+      // ✅ トークン保存
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", "staff");
+      // ✅ 遷移
+
+      // navigate("/dashboard");
+      navigate("/staff-dashboard");
+
+    } catch (err: any) {
+      setError("ログインに失敗しました");
+    }
 
     // 簡易認証（開発予定機能）
     // 本番環境では適切な認証処理を実装
-    navigate("/staff/dashboard");
+    // navigate("/staff/dashboard");
   };
 
   const handleNumberClick = (num: string) => {
@@ -274,6 +294,7 @@ export default function StaffLogin() {
             fullWidth
             variant='contained'
             size='large'
+            type='button' // ← 追加
             onClick={handleLogin}
             startIcon={<Login />}
             sx={{

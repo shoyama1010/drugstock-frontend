@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import {
   Box,
   Container,
@@ -100,11 +101,12 @@ export default function Home() {
           </Box>
           <Button
             component={Link}
-            to='/dashboard'
+            // to='/dashboard'
+            to='/login'
             variant='outlined'
             sx={{ mr: 2 }}
           >
-            ログイン
+            管理ログイン
           </Button>
 
           <Button
@@ -124,19 +126,6 @@ export default function Home() {
             スタッフログイン
           </Button>
 
-          {/* <Button
-            component={Link}
-            to='/site-map'
-            variant='text'
-            sx={{
-              color: "#757575",
-              "&:hover": {
-                bgcolor: "#f5f5f5",
-              },
-            }}
-          >
-            画面遷移図
-          </Button> */}
         </Toolbar>
       </AppBar>
 
@@ -166,7 +155,8 @@ export default function Home() {
             <Box display='flex' gap={2} justifyContent='center'>
               <Button
                 component={Link}
-                to='/dashboard'
+                // to='/dashboard'
+                to='/login'
                 variant='contained'
                 size='large'
                 sx={{
@@ -181,7 +171,7 @@ export default function Home() {
                   },
                 }}
               >
-                ログイン
+                管理 ログイン
               </Button>
               <Button
                 component={Link}

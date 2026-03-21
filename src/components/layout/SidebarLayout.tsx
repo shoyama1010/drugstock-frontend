@@ -23,6 +23,7 @@ import {
   People,
 } from "@mui/icons-material";
 
+import Header from "./Header";
 const drawerWidth = 240;
 
 export default function SidebarLayout() {
@@ -86,14 +87,22 @@ export default function SidebarLayout() {
           },
         }}
       >
+        {/* 🔥 ロゴクリックでダッシュボード */}
         <Toolbar
+          component={Link}
+          to='/'
           sx={{
+            textDecoration: "none", // ← これ重要（下線消す）
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             px: 2,
             py: 2.5,
             borderBottom: "1px solid #e0e0e0",
+            cursor: "pointer", // ← UX向上
+            "&:hover": {
+              bgcolor: "#f5f5f5",
+            },
           }}
         >
           <Inventory2 sx={{ fontSize: 28, color: "#1976d2", mr: 1 }} />
@@ -137,6 +146,7 @@ export default function SidebarLayout() {
         </List>
       </Drawer>
 
+      {/* メインコンテンツ */}
       <Box
         component='main'
         sx={{
@@ -145,6 +155,10 @@ export default function SidebarLayout() {
           minHeight: "100vh",
         }}
       >
+        {/* 🔥 ここにHeader（ログアウトボタン） */}
+        <Header />
+        
+        {/* 各ページ */}
         <Outlet />
       </Box>
     </Box>

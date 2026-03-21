@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 // pages
 import HomePage from "../features/home/HomePage";
 import Login from "../pages/auth/Login";
@@ -12,28 +12,23 @@ import TransactionsPage from "../features/transactions/TransactionsPage";
 import StockInPage from "../features/inbound/StockInPage";
 import StockOutPage from "../features/outbound/StockOutPage";
 import StaffManagementPage from "../features/staff/StaffManagementPage";
+import StaffDashboard from "../features/staff/StaffDashboard";
 // guard
-import { PrivateRoute } from "./PrivateRoute";
+import PrivateRoute  from "./PrivateRoute";
 
 export default function AppRouter() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* 🏠 トップ画面 */}
-        <Route path='/' element={<HomePage />} />
+    <Routes>
+      {/* 🏠 トップ */}
+      <Route path='/' element={<HomePage />} />
 
-        {/* 🔓 未ログインOK */}
-        <Route path='/login' element={<Login />} />
-        <Route path='/staff-login' element={<StaffLogin />} />
+      {/* 🔓 未ログイン */}
+      <Route path='/login' element={<Login />} />
+      <Route path='/staff-login' element={<StaffLogin />} />
 
-        {/* 🔒 認証必須 +レイアウト*/}
-        <Route
-          element={
-            <PrivateRoute>
-              <SidebarLayout />
-            </PrivateRoute>
-          }
-        >
+      {/* 🛡 管理者 */}
+      <Route element={<PrivateRoute role='admin' />}>
+        <Route element={<SidebarLayout />}>
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/products' element={<Products />} />
           <Route path='/stock' element={<StockPage />} />
@@ -41,12 +36,17 @@ export default function AppRouter() {
           <Route path='/stock-in' element={<StockInPage />} />
           <Route path='/stock-out' element={<StockOutPage />} />
           <Route path='/staff-management' element={<StaffManagementPage />} />
-          <Route path='/staff-login' element={<StaffLogin />} />
         </Route>
+      </Route>
 
-        {/* 🚨 存在しないURL対策 */}
-        <Route path='*' element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+      {/* 👷 スタッフ */}
+      <Route element={<PrivateRoute role='staff' />}>
+        <Route path='/staff-dashboard' element={<StaffDashboard />} />
+      </Route>
+
+      {/* 🚨 fallback */}
+      <Route path='*' element={<HomePage />} />
+    </Routes>
+    
   );
 }

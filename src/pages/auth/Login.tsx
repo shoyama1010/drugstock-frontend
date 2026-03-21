@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import axios from "axios";
-import { api } from "../../api/client";
-// import Login from "../pages/auth/Login";
+import { api } from "../../api/clients";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,18 +10,16 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await api.post("/admin/login", {
+      // const res = await api.post("/admin/login", {
+      const res = await api.post("/login", {//  ←Laraveに合わせる
         email,
         password,
       });
-      // const res = await axios.post("http://localhost/api/admin/login", {
-      //   email,
-      //   password,
-      // });
 
       // トークン保存
       localStorage.setItem("token", res.data.token);
-
+      localStorage.setItem("role", "admin"); // ← 追加
+      
       // ダッシュボードへ
       navigate("/dashboard");
     } catch (err) {
@@ -31,14 +28,34 @@ export default function Login() {
   };
 
   return (
-    <>
-      <input value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input
-        type='password'
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>ログイン</button>
-    </>
+    <div className='flex items-center justify-center min-h-screen bg-gray-100'>
+      <div className='bg-white p-8 rounded-xl shadow-md w-96'>
+        <h1 className='text-2xl font-bold text-center mb-6'>管理ログイン</h1>
+
+        <input
+          type='email'
+          placeholder='メールアドレス'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className='w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500'
+        />
+
+        <input
+          type='password'
+          placeholder='パスワード'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className='w-full p-3 mb-6 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500'
+        />
+
+        <button
+          onClick={handleLogin}
+          className='w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-lg hover:opacity-90 transition'
+        >
+          ログイン
+        </button>
+      </div>
+    </div>
+    
   );
 }
