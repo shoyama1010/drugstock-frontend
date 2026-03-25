@@ -75,7 +75,7 @@ export default function StaffDashboard() {
             alignSelf: "center",
           }}
         >
-          🚧 開発予定機能
+          🚧 開発 新機能
         </Box>
 
         <Box

@@ -33,27 +33,25 @@ export default function StaffLogin() {
       setError("PINは4桁で入力してください");
       return;
     }
+
     // 認証/開発中
     try {
       const res = await api.post("/staff/login", {
         employee_code: employeeId,
         pin: pin,
       });
+
       // ✅ トークン保存
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", "staff");
-      // ✅ 遷移
 
-      // navigate("/dashboard");
+      // ✅ 遷移
       navigate("/staff-dashboard");
 
     } catch (err: any) {
       setError("ログインに失敗しました");
     }
 
-    // 簡易認証（開発予定機能）
-    // 本番環境では適切な認証処理を実装
-    // navigate("/staff/dashboard");
   };
 
   const handleNumberClick = (num: string) => {

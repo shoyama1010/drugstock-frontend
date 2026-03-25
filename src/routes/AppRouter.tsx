@@ -21,11 +21,9 @@ export default function AppRouter() {
     <Routes>
       {/* 🏠 トップ */}
       <Route path='/' element={<HomePage />} />
-
       {/* 🔓 未ログイン */}
       <Route path='/login' element={<Login />} />
-      <Route path='/staff-login' element={<StaffLogin />} />
-
+      <Route path='staff-login' element={<StaffLogin />} />
       {/* 🛡 管理者 */}
       <Route element={<PrivateRoute role='admin' />}>
         <Route element={<SidebarLayout />}>
@@ -38,12 +36,10 @@ export default function AppRouter() {
           <Route path='/staff-management' element={<StaffManagementPage />} />
         </Route>
       </Route>
-
       {/* 👷 スタッフ */}
       <Route element={<PrivateRoute role='staff' />}>
         <Route path='/staff-dashboard' element={<StaffDashboard />} />
       </Route>
-
       {/* 🚨 fallback */}
       <Route path='*' element={<HomePage />} />
     </Routes>

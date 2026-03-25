@@ -10,14 +10,7 @@ export default function PrivateRoute({ role }: { role?: string }) {
   if (!token) {
     return <Navigate to='/login' replace />;
   }
-  // if (!token) {
-  //   // スタッフ系URLならスタッフログインへ
-  //   if (location.pathname.startsWith("/staff")) {
-  //     return <Navigate to='/staff-login' replace />;
-  //   }
-  //   return <Navigate to='/login' replace />;
-  // }
-
+  
   // roleチェック（必要な場合）
   if (role && userRole !== role) {
     if (userRole === "staff") {
@@ -28,6 +21,15 @@ export default function PrivateRoute({ role }: { role?: string }) {
 
   return <Outlet />;
 }
+
+// if (!token) {
+//     // スタッフ系URLならスタッフログインへ
+//     if (location.pathname.startsWith("/staff")) {
+//       return <Navigate to='/staff-login' replace />;
+//     }
+//     return <Navigate to='/login' replace />;
+//   }
+
 // type Props = {
 //   children: ReactNode;
 //   // children: JSX.Element;

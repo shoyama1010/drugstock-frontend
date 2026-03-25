@@ -10,8 +10,8 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      // const res = await api.post("/admin/login", {
-      const res = await api.post("/login", {//  ←Laraveに合わせる
+      const res = await api.post("/admin/login", {
+      // const res = await api.post("/login", {//  ←Laraveに合わせる
         email,
         password,
       });
@@ -22,7 +22,7 @@ export default function Login() {
       
       // ダッシュボードへ
       navigate("/dashboard");
-    } catch (err) {
+    } catch {
       alert("ログイン失敗");
     }
   };
