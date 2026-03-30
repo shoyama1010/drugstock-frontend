@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../api/clients"; // ← 既に使ってるやつ
+import api  from "../../api/clients"; // ← 既に使ってるやつ
 
 import {
   Box,
