@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import api from "../../api/clients";
 import {
@@ -18,6 +17,13 @@ import {
 } from "@mui/material";
 import { Add, Search, Edit, Delete } from "@mui/icons-material";
 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+
 // ✅ APIの型に合わせる
 interface Product {
   id: number;
@@ -33,6 +39,16 @@ export default function ProductManagementPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [open, setOpen] = useState(false); // 追加
+  const [form, setForm] = useState({ // 追加
+    code: "",
+    name: "",
+    sku: "",
+    category_id: 1,
+    unit_price: 0,
+    min_stock: 0,
+  });
+
   // ===============================
   // ✅ 商品登録（追加）
   // ===============================
@@ -40,22 +56,39 @@ export default function ProductManagementPage() {
     console.log("クリックされた！");
 
     try {
-      const res = await api.post("/products", {
-        code: "P9999",
-        name: "テスト商品",
-        sku: "TEST-001",
-        category_id: 1,
-        unit_price: 999,
-        is_active: true,
-      });
-
+      const res = await api.post("/products", form);
+      
       console.log("登録成功", res.data);
+
+      // ✅ モーダル閉じる
+      setOpen(false); // ダイアログを閉じる
+      
+      // ✅ フォーム初期化
+      setForm({
+        code: "",
+        name: "",
+        sku: "",
+        category_id: 1,
+        unit_price: 0,
+        min_stock: 0,
+      });
 
       // 一覧再取得
       fetchProducts();
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("登録失敗", err);
+
+      // ✅ Laravelバリデーションエラー表示
+      if (err.response?.data?.errors) {
+        const messages = Object.values(err.response.data.errors)
+          .flat()
+          .join("\n");
+
+        alert(messages);
+      } else {
+        alert("登録に失敗しました");
+      }
     }
   };
 
@@ -73,7 +106,6 @@ export default function ProductManagementPage() {
       console.error("取得失敗", error);
     }
   };
-
 
   useEffect(() => {
     fetchProducts();
@@ -105,6 +137,69 @@ export default function ProductManagementPage() {
 
   return (
     <Box>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>商品登録</DialogTitle>
+
+        <DialogContent>
+          <TextField
+            label="商品コード"
+            value={form.code}
+            onChange={(e) => setForm({ ...form, code: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+
+          <TextField
+            label="商品名"
+            fullWidth
+            margin="dense"
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+          />
+
+          <TextField
+            label="SKU"
+            fullWidth
+            margin="dense"
+            value={form.sku}
+            onChange={(e) =>
+              setForm({ ...form, sku: e.target.value })
+            }
+          />
+
+          <TextField
+            label="価格"
+            type="number"
+            fullWidth
+            margin="dense"
+            value={form.unit_price}
+            onChange={(e) =>
+              setForm({ ...form, unit_price: Number(e.target.value) })
+            }
+          />
+
+          <TextField
+            label="最小在庫"
+            type="number"
+            fullWidth
+            margin="dense"
+            value={form.min_stock}
+            onChange={(e) =>
+              setForm({ ...form, min_stock: Number(e.target.value) })
+            }
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>キャンセル</Button>
+          <Button onClick={handleCreate} variant="contained">
+            登録
+          </Button>
+        </DialogActions>
+      </Dialog>
+{/* *************************************** */}
       <Typography variant='h4' mb={2}>
         商品管理
       </Typography>
@@ -126,15 +221,18 @@ export default function ProductManagementPage() {
       />
 
       {/* ➕ 商品登録 */}
-      <Button variant='contained' startIcon={<Add />} sx={{ mb: 2 }} onClick={handleCreate}>
+      <Button variant='contained'
+       startIcon={<Add />} sx={{ mb: 2 }}
+        // onClick={handleCreate}>
+        onClick={() => setOpen(true)}>
         商品登録
       </Button>
-
       {/* 📦 テーブル */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>商品コード</TableCell>
               <TableCell>商品名</TableCell>
               <TableCell>SKU</TableCell>
               <TableCell>カテゴリ</TableCell>
@@ -147,6 +245,7 @@ export default function ProductManagementPage() {
           <TableBody>
             {filteredProducts.map((product) => (
               <TableRow key={product.id}>
+                <TableCell>{product.code}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sku}</TableCell>
                 <TableCell>{product.category_id}</TableCell>
@@ -171,5 +270,6 @@ export default function ProductManagementPage() {
         </Table>
       </TableContainer>
     </Box>
+
   );
 }

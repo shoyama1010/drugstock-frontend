@@ -1,30 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-// import { api } from "../../api/clients";
 import api from "../../api/clients";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    setError("");
+    if (!email || !password) {
+      setError("メールアドレスとパスワードを入力してください");
+      return;
+    }
+
     try {
-      const res = await api.post("/admin/login", {
-      // const res = await api.post("/login", {//  ←Laraveに合わせる
+      const res = await api.post("/login", {
         email,
         password,
       });
 
       // トークン保存
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", "admin"); // ← 追加
-      
+      localStorage.setItem("role", res.data.role); // ← 追加
+
       // ダッシュボードへ
-      navigate("/dashboard");
-    } catch {
-      alert("ログイン失敗");
+      if (res.data.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/staff-dashboard");
+      }
+    } catch (err: any) {
+      console.log(err);
+      alert(err.response?.data?.message || "ログイン失敗");
     }
   };
 
@@ -57,6 +66,6 @@ export default function Login() {
         </button>
       </div>
     </div>
-    
+
   );
 }

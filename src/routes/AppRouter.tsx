@@ -14,7 +14,7 @@ import StockOutPage from "../features/outbound/StockOutPage";
 import StaffManagementPage from "../features/staff/StaffManagementPage";
 import StaffDashboard from "../features/staff/StaffDashboard";
 // guard
-import PrivateRoute  from "./PrivateRoute";
+import { PrivateRoute } from "./PrivateRoute";
 
 export default function AppRouter() {
   return (
@@ -23,7 +23,7 @@ export default function AppRouter() {
       <Route path='/' element={<HomePage />} />
       {/* 🔓 未ログイン */}
       <Route path='/login' element={<Login />} />
-      <Route path='staff-login' element={<StaffLogin />} />
+      <Route path='/staff-login' element={<StaffLogin />} />
       {/* 🛡 管理者 */}
       <Route element={<PrivateRoute role='admin' />}>
         <Route element={<SidebarLayout />}>

@@ -34,22 +34,23 @@ export default function StaffLogin() {
       return;
     }
 
-    // 認証/開発中
+    // 認証
     try {
-      const res = await api.post("/staff/login", {
+      const res = await api.post("/login", {
         employee_code: employeeId,
         pin: pin,
       });
 
       // ✅ トークン保存
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", "staff");
+      // localStorage.setItem("role", "staff");
+      localStorage.setItem("role", res.data.role); // ← 追加
 
       // ✅ 遷移
       navigate("/staff-dashboard");
 
-    } catch (err: any) {
-      setError("ログインに失敗しました");
+    } catch (err) {
+      alert("ログインに失敗しました");
     }
 
   };
