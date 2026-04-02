@@ -49,6 +49,20 @@ export default function ProductManagementPage() {
     min_stock: 0,
   });
 
+  const [editOpen, setEditOpen] = useState(false);
+
+  const [editForm, setEditForm] = useState({
+    id: 0,
+    code: "",
+    name: "",
+    sku: "",
+    category_id: 1,
+    unit_price: 0,
+    min_stock: 0,
+  });
+
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
   // ===============================
   // ✅ 商品登録（追加）
   // ===============================
@@ -57,12 +71,12 @@ export default function ProductManagementPage() {
 
     try {
       const res = await api.post("/products", form);
-      
+
       console.log("登録成功", res.data);
 
       // ✅ モーダル閉じる
       setOpen(false); // ダイアログを閉じる
-      
+
       // ✅ フォーム初期化
       setForm({
         code: "",
@@ -111,16 +125,52 @@ export default function ProductManagementPage() {
     fetchProducts();
   }, []);
 
+  // 編集モーダル開く
+  const handleEditOpen = (product: Product) => {
+    setEditForm({
+      id: product.id,
+      code: product.code,
+      name: product.name,
+      sku: product.sku,
+      category_id: product.category_id,
+      unit_price: product.unit_price,
+      min_stock: product.min_stock,
+    });
+
+    setEditOpen(true);
+  };
+
+  // 更新処理
+  const handleUpdate = async () => {
+    try {
+      await api.put(`/products/${editForm.id}`, editForm);
+
+      alert("更新成功");
+
+      setEditOpen(false);
+
+      fetchProducts(); // ←これ絶対必要
+
+    } catch (error) {
+      console.error("更新失敗", error);
+      alert("更新失敗");
+    }
+  };
 
   // ===============================
   // ✅ 削除
   // ===============================
   const handleDelete = async (id: number) => {
+    console.log("削除ID:", id);
+
     if (!confirm("削除しますか？")) return;
 
     try {
-      await api.delete(`/products/${id}`);
-      setProducts(products.filter((p) => p.id !== id));
+      console.log("API実行前");
+      const res = await api.delete(`/products/${id}`);
+      console.log("削除成功", res);
+      
+      fetchProducts();
     } catch (error) {
       console.error("削除失敗", error);
     }
@@ -136,6 +186,7 @@ export default function ProductManagementPage() {
   );
 
   return (
+    // 登録モーダル
     <Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>商品登録</DialogTitle>
@@ -199,7 +250,101 @@ export default function ProductManagementPage() {
           </Button>
         </DialogActions>
       </Dialog>
-{/* *************************************** */}
+
+
+      {/* 編集モーダル */}
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+        <DialogTitle>商品編集</DialogTitle>
+
+        <DialogContent>
+          <TextField
+            label="商品コード"
+            value={editForm.code}
+            onChange={(e) =>
+              setEditForm({ ...editForm, code: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+
+          <TextField
+            label="商品名"
+            value={editForm.name}
+            onChange={(e) =>
+              setEditForm({ ...editForm, name: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+
+          <TextField
+            label="SKU"
+            value={editForm.sku}
+            onChange={(e) =>
+              setEditForm({ ...editForm, sku: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+
+          <TextField
+            label="価格"
+            type="number"
+            value={editForm.unit_price}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                unit_price: Number(e.target.value),
+              })
+            }
+            fullWidth
+            margin="dense"
+          />
+
+          <TextField
+            label="最小在庫"
+            type="number"
+            value={editForm.min_stock}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                min_stock: Number(e.target.value),
+              })
+            }
+            fullWidth
+            margin="dense"
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setEditOpen(false)}>キャンセル</Button>
+          <Button variant="contained" onClick={handleUpdate}>
+            更新
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 削除 */}
+      <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
+        <DialogTitle>削除確認</DialogTitle>
+        <DialogContent>本当に削除しますか？</DialogContent>
+        <DialogActions>
+
+          <Button onClick={() => setDeleteId(null)}>キャンセル</Button>
+          <Button
+            color="error"
+            onClick={async () => {
+              await api.delete(`/products/${deleteId}`);
+              fetchProducts();
+              setDeleteId(null);
+            }}
+          >
+            削除
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* *************************************** */}
       <Typography variant='h4' mb={2}>
         商品管理
       </Typography>
@@ -222,7 +367,7 @@ export default function ProductManagementPage() {
 
       {/* ➕ 商品登録 */}
       <Button variant='contained'
-       startIcon={<Add />} sx={{ mb: 2 }}
+        startIcon={<Add />} sx={{ mb: 2 }}
         // onClick={handleCreate}>
         onClick={() => setOpen(true)}>
         商品登録
@@ -253,13 +398,16 @@ export default function ProductManagementPage() {
                 <TableCell>{product.min_stock}</TableCell>
 
                 <TableCell>
-                  <IconButton color='primary'>
+                  <IconButton color='primary'
+                    onClick={() => handleEditOpen(product)}
+                  >
                     <Edit />
                   </IconButton>
 
                   <IconButton
                     color='error'
-                    onClick={() => handleDelete(product.id)}
+                    // onClick={() => handleDelete(product.id)}
+                    onClick={() => setDeleteId(product.id)}
                   >
                     <Delete />
                   </IconButton>
