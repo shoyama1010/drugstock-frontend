@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import { SidebarLayout } from "../../components/layout/SidebarLayout";
 import api from "../../api/clients";
 import {
   Box,
@@ -18,11 +17,12 @@ import {
 import { ArrowDownward, Save } from "@mui/icons-material";
 
 interface Product {
-  product_id: number;
+  id: number;
   name: string;
   sku: string;
-  shelf: string;
-  total_stock: number;
+  unit_price?: number;
+  min_stock?: number;
+  is_active?: boolean;
 }
 
 export default function StockIn() {
@@ -35,22 +35,22 @@ export default function StockIn() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get("/stocks");
-      setProducts(res.data);
+      try {
+        const res = await api.get("/products");
+        setProducts(res.data);
+      } catch (error) {
+        console.error(error);
+        setErrorMessage("商品一覧の取得に失敗しました。");
+      }
     };
+
     fetchProducts();
   }, []);
 
-  const selectedProduct = products.find((p) => p.product_id === selectedProductId);
+  const selectedProduct = products.find((p) => p.id === selectedProductId);
 
   const handleProductChange = (productId: number) => {
     setSelectedProductId(productId);
-
-    // const product = products.find((p) => p.product_id === productId);
-
-    // if (product) {
-    //   setShelfNumber(product.shelf);
-    // }
     setErrorMessage("");
     setSuccessMessage("");
   };
@@ -61,18 +61,17 @@ export default function StockIn() {
     setErrorMessage("");
     setSuccessMessage("");
 
-    // バリデーション
     if (!selectedProductId) {
       setErrorMessage("商品を選択してください。");
       return;
     }
 
-    if (!quantity || parseInt(quantity) <= 0) {
+    if (!quantity || parseInt(quantity, 10) <= 0) {
       setErrorMessage("入庫数量は1以上の数値を入力してください。");
       return;
     }
 
-    if (parseInt(quantity) > 10000) {
+    if (parseInt(quantity, 10) > 10000) {
       setErrorMessage("入庫数量は10,000以下で入力してください。");
       return;
     }
@@ -82,46 +81,49 @@ export default function StockIn() {
       return;
     }
 
-    // 成功処理（実際にはAPIコール）
     try {
-      // 👇ここが超重要
-      await api.post("/stocks/in", {
+      const formattedShelf = shelfNumber.toUpperCase().trim();
+
+      const res = await api.post("/stocks/in", {
         product_id: selectedProductId,
-        lot_number: `LOT-${Date.now()}`, // 仮（あとで改善OK）
-        quantity: parseInt(quantity),
+        lot_number: `LOT-${Date.now()}`,
+        quantity: parseInt(quantity, 10),
         expiry_date: null,
-        shelf: shelfNumber, // 👈 これ追加
+        shelf: formattedShelf,
       });
 
-      const product = products.find((p) => p.product_id === selectedProductId);
+      const product = products.find((p) => p.id === selectedProductId);
 
-      setSuccessMessage("入庫成功！");
+      if (res.data?.allocations && Array.isArray(res.data.allocations)) {
+        const allocationText = res.data.allocations
+          .map((a: { shelf: string; quantity: number }) => `${a.shelf} に ${a.quantity}個`)
+          .join(" / ");
 
-      // リセット
+        setSuccessMessage(
+          `${product?.name}（SKU: ${product?.sku}）を${quantity}個入庫しました。 ${allocationText}`
+        );
+      } else {
+        setSuccessMessage(
+          `${product?.name}（SKU: ${product?.sku}）を${quantity}個入庫しました。棚番号: ${formattedShelf}`
+        );
+      }
+
       setSelectedProductId("");
       setQuantity("");
       setShelfNumber("");
+    } catch (error: any) {
+      console.error("🔥エラー詳細↓↓↓↓");
+      console.error(error.response?.data);
 
-    } catch (error) {
-      console.error(error);
-      setErrorMessage("入庫失敗しました");
+      setErrorMessage(
+        error.response?.data?.message || "入庫失敗しました"
+      );
     }
-
-    // const product = products.find((p) => p.product_id === selectedProductId);
-    // setSuccessMessage(
-    //   `${product?.name}（SKU: ${product?.sku}）を${quantity}個入庫しました。棚番号: ${shelfNumber}`,
-    // );
-    // // フォームをリセット
-    // setSelectedProductId("");
-    // setQuantity("");
-    // setShelfNumber("");
-
   };
 
   return (
-    <Container maxWidth='md' sx={{ py: 4 }}>
-      {/* ページヘッダー */}
-      <Box display='flex' alignItems='center' mb={4}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Box display="flex" alignItems="center" mb={4}>
         <ArrowDownward
           sx={{
             fontSize: 32,
@@ -129,15 +131,14 @@ export default function StockIn() {
             mr: 1.5,
           }}
         />
-        <Typography variant='h4' fontWeight={600}>
+        <Typography variant="h4" fontWeight={600}>
           入庫処理
         </Typography>
       </Box>
 
-      {/* メッセージ表示エリア */}
       {errorMessage && (
         <Alert
-          severity='error'
+          severity="error"
           sx={{ mb: 3 }}
           onClose={() => setErrorMessage("")}
         >
@@ -147,7 +148,7 @@ export default function StockIn() {
 
       {successMessage && (
         <Alert
-          severity='success'
+          severity="success"
           sx={{ mb: 3 }}
           onClose={() => setSuccessMessage("")}
         >
@@ -155,32 +156,28 @@ export default function StockIn() {
         </Alert>
       )}
 
-      {/* フォーム */}
       <Paper elevation={0} sx={{ border: "1px solid #e0e0e0", p: 4 }}>
         <form onSubmit={handleSubmit}>
-
-          {/* 商品選択 */}
           <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id='product-select-label'>商品選択</InputLabel>
+            <InputLabel id="product-select-label">商品選択</InputLabel>
             <Select
-              labelId='product-select-label'
+              labelId="product-select-label"
               value={selectedProductId}
-              label='商品選択'
-              onChange={(e) => handleProductChange(e.target.value as number)}
+              label="商品選択"
+              onChange={(e) => handleProductChange(Number(e.target.value))}
             >
-              <MenuItem value=''>
+              <MenuItem value="">
                 <em>選択してください</em>
               </MenuItem>
 
               {products.map((product) => (
-                <MenuItem key={product.product_id} value={product.product_id}>
-                  {product.name} ({product.sku}) - 現在庫:{product.total_stock}
+                <MenuItem key={product.id} value={product.id}>
+                  {product.name} ({product.sku})
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          {/* 選択商品情報表示 */}
           {selectedProduct && (
             <Box
               sx={{
@@ -191,76 +188,65 @@ export default function StockIn() {
                 border: "1px solid #e0e0e0",
               }}
             >
-              <Typography variant='body2' color='text.secondary' gutterBottom>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
                 選択中の商品情報
               </Typography>
-              <Box display='flex' gap={3} mt={1}>
+              <Box display="flex" gap={3} mt={1}>
                 <Box>
-                  <Typography variant='caption' color='text.secondary'>
+                  <Typography variant="caption" color="text.secondary">
                     商品名
                   </Typography>
-                  <Typography variant='body2' fontWeight={600}>
+                  <Typography variant="body2" fontWeight={600}>
                     {selectedProduct.name}
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant='caption' color='text.secondary'>
+                  <Typography variant="caption" color="text.secondary">
                     SKU
                   </Typography>
                   <Typography
-                    variant='body2'
+                    variant="body2"
                     fontWeight={600}
                     sx={{ fontFamily: "monospace" }}
                   >
                     {selectedProduct.sku}
                   </Typography>
                 </Box>
-                <Box>
-                  <Typography variant='caption' color='text.secondary'>
-                    現在庫数
-                  </Typography>
-                  <Typography variant='body2' fontWeight={600}>
-                    {selectedProduct.total_stock.toLocaleString()}
-                  </Typography>
-                </Box>
               </Box>
             </Box>
           )}
 
-          {/* 入庫数量 */}
           <TextField
             fullWidth
-            label='入庫数量'
-            type='number'
+            label="入庫数量"
+            type="number"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            placeholder='入庫する数量を入力'
+            placeholder="入庫する数量を入力"
             InputProps={{
               inputProps: { min: 1, max: 10000 },
             }}
             sx={{ mb: 3 }}
-            helperText='1〜10,000の範囲で入力してください'
+            helperText="1〜10,000の範囲で入力してください"
           />
 
-          {/* 棚番号 */}
           <TextField
             fullWidth
-            label='棚番号'
+            label="棚番号"
             value={shelfNumber}
             onChange={(e) => setShelfNumber(e.target.value)}
-            placeholder='例: A-12'
+            placeholder="例: A-1-01"
             sx={{ mb: 3 }}
-            helperText='商品を保管する棚の番号を入力してください'
+            helperText="商品を保管する棚の番号を入力してください"
           />
 
           <Divider sx={{ my: 3 }} />
 
-          {/* 送信ボタン */}
-          <Box display='flex' gap={2}>
+          <Box display="flex" gap={2}>
             <Button
-              type='submit'
-              variant='contained'
-              size='large'
+              type="submit"
+              variant="contained"
+              size="large"
               startIcon={<Save />}
               sx={{
                 flex: 1,
@@ -274,8 +260,8 @@ export default function StockIn() {
               入庫登録
             </Button>
             <Button
-              variant='outlined'
-              size='large'
+              variant="outlined"
+              size="large"
               sx={{
                 px: 4,
                 py: 1.5,
@@ -293,7 +279,6 @@ export default function StockIn() {
           </Box>
         </form>
 
-        {/* 注意事項 */}
         <Box
           sx={{
             mt: 4,
@@ -301,19 +286,17 @@ export default function StockIn() {
             borderTop: "1px solid #e0e0e0",
           }}
         >
-          <Typography variant='body2' color='text.secondary' gutterBottom>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
             <strong>注意事項：</strong>
           </Typography>
           <Typography
-            variant='body2'
-            color='text.secondary'
-            component='ul'
+            variant="body2"
+            color="text.secondary"
+            component="ul"
             sx={{ pl: 2 }}
           >
             <li>入庫数量は必ず実際の数量を確認してから入力してください。</li>
-            <li>
-              棚番号は正確に入力してください。誤りがあると商品が見つからなくなります。
-            </li>
+            <li>棚番号は正確に入力してください。誤りがあると商品が見つからなくなります。</li>
             <li>入庫後は在庫管理画面で在庫数を確認してください。</li>
           </Typography>
         </Box>

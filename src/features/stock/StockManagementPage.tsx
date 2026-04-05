@@ -30,11 +30,10 @@ interface StockItem {
   product_id: number;
   name: string;
   sku: string;
+  zone: string;
   aisle: string;
   shelf: string;
   total_stock: number;
-  // shelf: string;
-  // stock: number;
   updated_at?: string;
 }
 
@@ -118,7 +117,7 @@ export default function StockManagement() {
     // CSV data rows
     filteredStock.forEach((item) => {
       const row = [
-        `"${item.name}"`, item.sku, item.total_stock, `${item.aisle}-${item.shelf}`,
+        `"${item.name}"`, item.sku, item.total_stock, `${item.zone}-${item.aisle}-${item.shelf}`,
       ];
       csvRows.push(row.join(","));
     });
@@ -224,7 +223,7 @@ export default function StockManagement() {
                   return (
                     <TableRow
                       // key={item.id}
-                      key={`${item.product_id}-${item.shelf}`}
+                      key={`${item.product_id}-${item.zone}-${item.aisle}-${item.shelf}`}
                       hover
                       sx={{
                         "&:hover": {
@@ -249,7 +248,7 @@ export default function StockManagement() {
                         </Box>
                       </TableCell>
 
-                      <TableCell>{item.aisle}-{item.shelf}</TableCell>
+                      <TableCell>{item.zone}-{item.aisle}-{item.shelf}</TableCell>
                      
                       <TableCell align='right'>
                         <Box
