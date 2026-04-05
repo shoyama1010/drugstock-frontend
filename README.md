@@ -1,4 +1,13 @@
-# React + TypeScript + Vite
+# DrugStore向け在庫管理SPA
+
+# 作成した目的
+
+医薬品卸倉庫を想定した在庫管理システム（SPA仕様）
+
+# 技術構成　
+
+React + TypeScript + Vite
+
 
 <img width="1270" height="658" alt="Image" src="https://github.com/user-attachments/assets/dc849e94-d550-4250-87ba-c250fb0e0b32" />
 
