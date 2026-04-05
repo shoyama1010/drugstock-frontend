@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../../api/clients";
 // import { SidebarLayout } from "../../components/layout/SidebarLayout";
 import {
   Box,
@@ -17,6 +18,7 @@ import {
   Button,
   Chip,
 } from "@mui/material";
+
 import {
   Search,
   ArrowDownward,
@@ -25,124 +27,52 @@ import {
 } from "@mui/icons-material";
 
 interface StockItem {
-  id: number;
+  product_id: number;
   name: string;
   sku: string;
-  shelfNumber: string;
-  stock: number;
-  updatedAt: string;
+  aisle: string;
+  shelf: string;
+  total_stock: number;
+  // shelf: string;
+  // stock: number;
+  updated_at?: string;
 }
 
-const mockStockData: StockItem[] = [
-  {
-    id: 1,
-    name: "ロキソニンS",
-    sku: "MED-001",
-    shelfNumber: "A-12",
-    stock: 245,
-    updatedAt: "2026-02-24 10:30",
-  },
-  {
-    id: 2,
-    name: "パブロンゴールドA",
-    sku: "MED-002",
-    shelfNumber: "A-13",
-    stock: 15,
-    updatedAt: "2026-02-24 09:15",
-  },
-  {
-    id: 3,
-    name: "ムヒS",
-    sku: "MED-003",
-    shelfNumber: "B-05",
-    stock: 0,
-    updatedAt: "2026-02-23 16:45",
-  },
-  {
-    id: 4,
-    name: "DHC ビタミンC",
-    sku: "SUP-001",
-    shelfNumber: "C-08",
-    stock: 156,
-    updatedAt: "2026-02-24 11:20",
-  },
-  {
-    id: 5,
-    name: "花王 アタックZERO",
-    sku: "DLY-001",
-    shelfNumber: "D-15",
-    stock: 8,
-    updatedAt: "2026-02-24 08:50",
-  },
-  {
-    id: 6,
-    name: "ライオン クリニカ",
-    sku: "DLY-002",
-    shelfNumber: "D-16",
-    stock: 412,
-    updatedAt: "2026-02-24 12:05",
-  },
-  {
-    id: 7,
-    name: "バファリンA",
-    sku: "MED-004",
-    shelfNumber: "A-14",
-    stock: 198,
-    updatedAt: "2026-02-24 10:15",
-  },
-  {
-    id: 8,
-    name: "目薬サンテFX",
-    sku: "MED-005",
-    shelfNumber: "B-03",
-    stock: 0,
-    updatedAt: "2026-02-22 14:30",
-  },
-  {
-    id: 9,
-    name: "マスク 50枚入",
-    sku: "DLY-003",
-    shelfNumber: "E-01",
-    stock: 534,
-    updatedAt: "2026-02-24 09:40",
-  },
-  {
-    id: 10,
-    name: "ポカリスエット",
-    sku: "BEV-001",
-    shelfNumber: "F-10",
-    stock: 45,
-    updatedAt: "2026-02-24 11:55",
-  },
-  {
-    id: 11,
-    name: "正露丸",
-    sku: "MED-006",
-    shelfNumber: "A-15",
-    stock: 18,
-    updatedAt: "2026-02-24 08:20",
-  },
-  {
-    id: 12,
-    name: "のど飴",
-    sku: "FD-001",
-    shelfNumber: "G-02",
-    stock: 0,
-    updatedAt: "2026-02-21 15:10",
-  },
-];
+
 
 export default function StockManagement() {
+  const [stocks, setStocks] = useState<StockItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filteredStock = mockStockData.filter(
+  // 🔥 API取得
+  const fetchStocks = async () => {
+    try {
+      const res = await api.get("/stocks");
+      console.log("在庫API:", res.data);
+      setStocks(res.data);
+    } catch (error) {
+      console.error("在庫取得失敗", error);
+    }
+  };
+
+  // 初回ロード
+  useEffect(() => {
+    fetchStocks();
+
+    const interval = setInterval(fetchStocks, 3000); // 3秒ごとに更新
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🔍 検索
+  const filteredStock = stocks.filter(
     (item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  // ページネーション
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -154,6 +84,7 @@ export default function StockManagement() {
     setPage(0);
   };
 
+  // 在庫状態
   const getStockStatus = (stock: number) => {
     if (stock === 0) {
       return {
@@ -186,7 +117,9 @@ export default function StockManagement() {
 
     // CSV data rows
     filteredStock.forEach((item) => {
-      const row = [`"${item.name}"`, item.sku, item.stock, item.shelfNumber];
+      const row = [
+        `"${item.name}"`, item.sku, item.total_stock, `${item.aisle}-${item.shelf}`,
+      ];
       csvRows.push(row.join(","));
     });
 
@@ -281,14 +214,17 @@ export default function StockManagement() {
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {filteredStock
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((item) => {
-                  const status = getStockStatus(item.stock);
+                  const status = getStockStatus(item.total_stock);
+
                   return (
                     <TableRow
-                      key={item.id}
+                      // key={item.id}
+                      key={`${item.product_id}-${item.shelf}`}
                       hover
                       sx={{
                         "&:hover": {
@@ -297,6 +233,7 @@ export default function StockManagement() {
                       }}
                     >
                       <TableCell>{item.name}</TableCell>
+
                       <TableCell>
                         <Box
                           component='span'
@@ -311,7 +248,9 @@ export default function StockManagement() {
                           {item.sku}
                         </Box>
                       </TableCell>
-                      <TableCell>{item.shelfNumber}</TableCell>
+
+                      <TableCell>{item.aisle}-{item.shelf}</TableCell>
+                     
                       <TableCell align='right'>
                         <Box
                           component='span'
@@ -321,9 +260,10 @@ export default function StockManagement() {
                             fontSize: "1.1rem",
                           }}
                         >
-                          {item.stock.toLocaleString()}
+                          {item.total_stock.toLocaleString()}
                         </Box>
                       </TableCell>
+
                       <TableCell>
                         <Chip
                           label={status.label}
@@ -336,16 +276,20 @@ export default function StockManagement() {
                           }}
                         />
                       </TableCell>
+
                       <TableCell sx={{ color: "text.secondary" }}>
-                        {item.updatedAt}
+                        {/* {item.updated_at} */}
+                        {item.updated_at ?? "-"}
                       </TableCell>
+
                       <TableCell align='center'>
+                        {/* 入庫 */}
                         <Box display='flex' gap={1} justifyContent='center'>
                           <Button
                             variant='outlined'
                             size='small'
                             startIcon={<ArrowDownward />}
-                            disabled={item.stock === 0}
+                            disabled={item.total_stock === 0}
                             sx={{
                               minWidth: 90,
                               color: "#2e7d32",
@@ -362,11 +306,12 @@ export default function StockManagement() {
                           >
                             入庫
                           </Button>
+                          {/* 出庫 */}
                           <Button
                             variant='outlined'
                             size='small'
                             startIcon={<ArrowUpward />}
-                            disabled={item.stock === 0}
+                            disabled={item.total_stock === 0}
                             sx={{
                               minWidth: 90,
                               color: "#d32f2f",

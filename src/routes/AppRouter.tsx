@@ -13,6 +13,7 @@ import StockInPage from "../features/inbound/StockInPage";
 import StockOutPage from "../features/outbound/StockOutPage";
 import StaffManagementPage from "../features/staff/StaffManagementPage";
 import StaffDashboard from "../features/staff/StaffDashboard";
+
 // guard
 import { PrivateRoute } from "./PrivateRoute";
 
@@ -34,6 +35,7 @@ export default function AppRouter() {
           <Route path='/stock-in' element={<StockInPage />} />
           <Route path='/stock-out' element={<StockOutPage />} />
           <Route path='/staff-management' element={<StaffManagementPage />} />
+          {/* <Route path="/stock/:shelf" element={<StockDetailPage />} /> */}
         </Route>
       </Route>
       {/* 👷 スタッフ */}
