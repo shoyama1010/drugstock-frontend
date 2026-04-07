@@ -103,6 +103,24 @@ export default function StaffLogin() {
             borderRadius: 2,
           }}
         >
+          {/* 開発新機能バッジ */}
+          <Box
+            sx={{
+              display: "inline-block",
+              bgcolor: "#9e9e9e",
+              color: "#ffffff",
+              px: 2,
+              py: 0.5,
+              borderRadius: 1,
+              mb: 4,
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              alignSelf: "center",
+            }}
+          >
+            🚧 開発 新機能
+          </Box>
+
           {/* ロゴエリア */}
           <Box sx={{ textAlign: "center", mb: 3 }}>
             <Box

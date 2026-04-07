@@ -66,10 +66,10 @@ export default function StockIn() {
       return;
     }
 
-    if (!quantity || parseInt(quantity, 10) <= 0) {
-      setErrorMessage("入庫数量は1以上の数値を入力してください。");
-      return;
-    }
+    // if (!quantity || parseInt(quantity, 10) <= 0) {
+    //   setErrorMessage("入庫数量は1以上の数値を入力してください。");
+    //   return;
+    // }
 
     if (parseInt(quantity, 10) > 10000) {
       setErrorMessage("入庫数量は10,000以下で入力してください。");
@@ -220,7 +220,7 @@ export default function StockIn() {
             fullWidth
             label="入庫数量"
             type="number"
-            value={quantity}
+            value={quantity || ''}
             onChange={(e) => setQuantity(e.target.value)}
             placeholder="入庫する数量を入力"
             InputProps={{

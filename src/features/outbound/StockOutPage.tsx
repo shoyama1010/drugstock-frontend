@@ -357,7 +357,7 @@ export default function StockOut() {
             fullWidth
             label="出庫数量"
             type="number"
-            value={quantity}
+            value={quantity }
             onChange={(e) => {
               setQuantity(e.target.value);
               setErrorMessage("");
