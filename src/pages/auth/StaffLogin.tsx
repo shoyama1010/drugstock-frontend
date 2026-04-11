@@ -43,12 +43,16 @@ export default function StaffLogin() {
 
       // ✅ トークン保存
       localStorage.setItem("token", res.data.token);
-      // localStorage.setItem("role", "staff");
       localStorage.setItem("role", res.data.role); // ← 追加
 
       // ✅ 遷移
-      navigate("/staff-dashboard");
-
+      if (res.data.requires_pin_change) {
+        navigate("/staff/change-pin");
+      } else {
+        navigate("/staff-dashboard");
+      }
+      // navigate("/staff-dashboard");
+      
     } catch (err) {
       alert("ログインに失敗しました");
     }

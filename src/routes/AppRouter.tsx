@@ -13,6 +13,8 @@ import StockInPage from "../features/inbound/StockInPage";
 import StockOutPage from "../features/outbound/StockOutPage";
 import StaffManagementPage from "../features/staff/StaffManagementPage";
 import StaffDashboard from "../features/staff/StaffDashboard";
+import Reports from "../features/reports/Reports";
+import StaffChangePinPage from "../features/staff/StaffChangePinPage";
 
 // guard
 import { PrivateRoute } from "./PrivateRoute";
@@ -35,16 +37,18 @@ export default function AppRouter() {
           <Route path='/stock-in' element={<StockInPage />} />
           <Route path='/stock-out' element={<StockOutPage />} />
           <Route path='/staff-management' element={<StaffManagementPage />} />
+          <Route path='/reports' element={<Reports />} />
           {/* <Route path="/stock/:shelf" element={<StockDetailPage />} /> */}
         </Route>
       </Route>
       {/* 👷 スタッフ */}
       <Route element={<PrivateRoute role='staff' />}>
         <Route path='/staff-dashboard' element={<StaffDashboard />} />
+        <Route path='/staff/change-pin' element={<StaffChangePinPage />} />
       </Route>
       {/* 🚨 fallback */}
       <Route path='*' element={<HomePage />} />
     </Routes>
-    
+
   );
 }
