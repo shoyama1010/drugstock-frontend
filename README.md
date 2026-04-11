@@ -1,12 +1,45 @@
-# DrugStore向け在庫管理SPA
+## アプリ概要（画面構成）
 
-# 作成した目的
+・React で構築した在庫管理SPAフロントエンド
+
+・Laravel API と連携して動作
+
+## 作成した目的
 
 医薬品卸倉庫を想定した在庫管理システム（SPA仕様）
 
-# 技術構成　
+## 技術構成　
 
-React + TypeScript + Vite
+・React 
+
+・TypeScript  
+
+・Vite
+
+・React Router
+
+・Axios
+
+・CSS または Tailwind / MUI 使用ならそれも記載
+
+## 機能一覧
+
+・ログイン画面
+
+・ダッシュボード
+
+・商品管理画面
+
+・入庫画面
+
+・出庫画面
+
+・在庫一覧画面
+
+・入出庫履歴画面
+
+・スタッフ管理画面
+
 
 
 <img width="1270" height="658" alt="Image" src="https://github.com/user-attachments/assets/dc849e94-d550-4250-87ba-c250fb0e0b32" />
