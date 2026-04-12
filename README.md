@@ -6,7 +6,7 @@
 
 ## アプリケーションURL
 
-http://localhost:8000
+http://localhost:5173
 
 ## 作成した目的
 
