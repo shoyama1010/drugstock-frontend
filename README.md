@@ -20,7 +20,7 @@
 
 ・Axios
 
-・CSS または Tailwind / MUI 使用ならそれも記載
+・CSS または Tailwind / MUI（Material UI） 
 
 ## 機能一覧
 
