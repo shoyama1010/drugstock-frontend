@@ -173,7 +173,8 @@ export default function Home() {
               >
                 管理 ログイン
               </Button>
-              <Button
+
+              {/* <Button
                 component={Link}
                 to='/dashboard'
                 variant='outlined'
@@ -192,7 +193,7 @@ export default function Home() {
                 }}
               >
                 デモを見る
-              </Button>
+              </Button> */}
             </Box>
           </Box>
         </Container>
