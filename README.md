@@ -45,6 +45,7 @@ http://localhost:5173
 ・スタッフ管理画面
 
 
+<img width="1207" height="670" alt="Image" src="https://github.com/user-attachments/assets/eec7bb2b-5fc8-4123-b538-dd39db18ea1d" />
 
 <img width="1270" height="658" alt="Image" src="https://github.com/user-attachments/assets/dc849e94-d550-4250-87ba-c250fb0e0b32" />
 
