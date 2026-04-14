@@ -155,7 +155,7 @@ export default function Dashboard() {
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Typography variant="h4" fontWeight={600} gutterBottom sx={{ mb: 3 }}>
-        ダッシュボード
+        現在の商品在庫内容
       </Typography>
 
       {loading && (
@@ -195,7 +195,7 @@ export default function Dashboard() {
                   最近の活動
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  現在は概要表示のみです。今後、直近の入出庫履歴やアラート表示を追加予定です。
+                  現在は（管理者での）入出庫処理のみです。今後、スタッフでの入出庫内容やレポート表示を追加予定です。
                 </Typography>
               </CardContent>
             </Card>
