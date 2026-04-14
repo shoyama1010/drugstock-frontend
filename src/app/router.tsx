@@ -1,3 +1,5 @@
+// AppRouterにある為、コメントアウト
+
 // import { createBrowserRouter } from "react-router-dom";
 // import SidebarLayout from "../components/layout/SidebarLayout";
 // import DashboardPage from "../features/dashboard/DashboardPage";
