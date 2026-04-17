@@ -90,11 +90,11 @@ http://localhost:5173
 　npm run dev
 
 ## 工夫した点
-- ロール別認証（admin / staff）をフロント側で制御
-- (app/router.tsxではなく) PrivateRoute による認証ガード
-- ダッシュボードを実データと連動
-- エラー時のUI表示（Alert）
-- 再利用可能なコンポーネント設計
+- ロール別認証（admin / staff）をフロント側で制御する理解
+- (app/router.tsxではなく) PrivateRoute による認証ガードの設定方法
+- ダッシュボードを実データと連動の仕方
+- エラー時のUI表示（Alert）の方法
+- 再利用可能なコンポーネント設計の考え方
 
 ## 苦労した点
 ■ 認証フローの分岐
