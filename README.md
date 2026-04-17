@@ -89,7 +89,35 @@ http://localhost:5173
 
 　npm run dev
 
+## 工夫した点
+- ロール別認証（admin / staff）をフロント側で制御
+- (app/router.tsxではなく) PrivateRoute による認証ガード
+- ダッシュボードを実データと連動
+- エラー時のUI表示（Alert）
+- 再利用可能なコンポーネント設計
 
+## 苦労した点
+■ 認証フローの分岐
+
+ 管理者（email）とスタッフ（employee_code + PIN）のログイン方式が異なるため、APIとフロントの分岐設計に苦労しました。
+
+■ PIN変更フロー
+- 初回ログイン時のみ PIN変更画面へ遷移する制御（requires_pin_change）を実装し、
+- 状態管理とルーティング制御の整合性を取るのが難しかったです。
+
+■ APIエラー処理
+  422（バリデーション）・403（権限）など、ステータスごとの分岐処理とUI表示の実装に苦労しました。
+
+■ 在庫データの整合性
+  ロット × 棚（location）という構造をフロントで扱う際に、データ構造の理解と表示ロジックの整理に時間がかかりました。
+
+##  今後の改善予定
+- フォームバリデーションの統一（React Hook Form導入）
+- UIのさらなる改善（入力補助・UX向上）
+- グラフ表示（在庫推移）
+- モバイル対応
+- コンポーネントの再利用性向上
+  
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
