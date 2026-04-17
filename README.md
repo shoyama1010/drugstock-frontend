@@ -1,8 +1,11 @@
+# DrugStore 在庫管理SPA（フロントエンド）
+
 ## アプリ概要（画面構成）
 
-・React で構築した在庫管理SPAフロントエンド
+- 医薬品卸倉庫の業務を想定した在庫管理システムのフロントエンドです。
+- 商品管理・入出庫・在庫状況・履歴確認をブラウザ上で操作できます。
 
-・Laravel API と連携して動作
+・バックエンド（Laravel API）と連携し、リアルタイムに在庫を管理します。
 
 ## アプリケーションURL
 
@@ -14,36 +17,48 @@ http://localhost:5173
 
 ## 技術構成　
 
-・React 
+### フロントエンド
+- React 
+- TypeScript  
+- Vite
+- React Router
+- Tailwind css / MUI（Material UI）
 
-・TypeScript  
+### API連携
+- Axios（APIクライアント）
+- Laravel API（Sanctum認証）
 
-・Vite
-
-・React Router
-
-・Axios
-
-・CSS または Tailwind / MUI（Material UI） 
 
 ## 機能一覧
 
-・ログイン画面
+### ■ 認証
+- 管理者ログイン（メール + パスワード）
+- スタッフログイン（社員番号 + PIN）
+- 初回ログイン時のPIN変更機能
 
-・ダッシュボード
+### ■ ダッシュボード
+- 総商品数
+- 総在庫数
+- 本日入庫数
+- 本日出庫数
 
-・商品管理画面
+### ■ 商品管理
+- 商品一覧表示
+- 商品登録
+- 商品編集
+- 商品削除
 
-・入庫画面
+### ■ 在庫管理
+- 在庫一覧表示（棚ごと）
+- ロット単位の在庫管理
 
-・出庫画面
+### ■ 入出庫処理
+- 入庫登録
+- 出庫登録
 
-・在庫一覧画面
-
-・入出庫履歴画面
-
-・スタッフ管理画面
-
+### ■ 履歴管理
+- 入出庫履歴一覧表示
+- CSV出力
 
 <img width="1207" height="670" alt="Image" src="https://github.com/user-attachments/assets/eec7bb2b-5fc8-4123-b538-dd39db18ea1d" />
 
@@ -58,6 +73,23 @@ http://localhost:5173
 <img width="1275" height="684" alt="Image" src="https://github.com/user-attachments/assets/e8e240b1-2ab1-4488-8487-be0c0cca84d2" />
 
 <img width="1271" height="660" alt="Image" src="https://github.com/user-attachments/assets/3947357e-c912-4290-bd35-5ad5f7ba22e4" />
+
+# 環境構築
+
+## 1. リポジトリをクローン
+
+- git clone https://github.com/あなたのリポジトリ.git
+- cd drugstock-frontend
+
+## 2.　パッケージをインストール
+
+　npm install
+
+## 3. 開発サーバー起動
+
+　npm run dev
+
+
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
