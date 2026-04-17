@@ -78,7 +78,7 @@ http://localhost:5173
 
 ## 1. リポジトリをクローン
 
-- git clone https://github.com/あなたのリポジトリ.git
+- git clone https://github.com/shoyama1010/drugstock-frontend.git
 - cd drugstock-frontend
 
 ## 2.　パッケージをインストール
