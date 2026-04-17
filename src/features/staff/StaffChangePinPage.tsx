@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import api from "../../api/clients";
 import {
   Box,
@@ -11,18 +12,53 @@ import {
   Container,
 } from "@mui/material";
 
+type ChangePinRequest = {
+  current_pin: string;
+  new_pin: string;
+  new_pin_confirmation: string;
+};
+
+type ChangePinSuccessResponse = {
+  message: string;
+};
+
+type ValidationErrorResponse = {
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
 export default function StaffChangePinPage() {
   const navigate = useNavigate();
 
-  const [currentPin, setCurrentPin] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [newPinConfirmation, setNewPinConfirmation] = useState("");
+  const [currentPin, setCurrentPin] = useState<string>("");
+  const [newPin, setNewPin] = useState<string>("");
+  const [newPinConfirmation, setNewPinConfirmation] = useState<string>("");
 
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleChangePin = async () => {
+  const normalizePin = (value: string): string => {
+    return value.replace(/\D/g, "").slice(0, 4);
+  };
+
+  const getFirstValidationError = (
+    errors?: Record<string, string[]>
+  ): string | null => {
+    if (!errors) return null;
+
+    const firstKey = Object.keys(errors)[0];
+    if (!firstKey) return null;
+
+    const firstMessages = errors[firstKey];
+    if (!Array.isArray(firstMessages) || firstMessages.length === 0) {
+      return null;
+    }
+
+    return firstMessages[0];
+  };
+
+  const handleChangePin = async (): Promise<void> => {
     setErrorMessage("");
     setSuccessMessage("");
 
@@ -31,46 +67,84 @@ export default function StaffChangePinPage() {
       return;
     }
 
-    if (currentPin.length !== 4 || newPin.length !== 4 || newPinConfirmation.length !== 4) {
+    if (
+      currentPin.length !== 4 ||
+      newPin.length !== 4 ||
+      newPinConfirmation.length !== 4
+    ) {
       setErrorMessage("PINはすべて4桁で入力してください。");
       return;
     }
 
+    if (newPin !== newPinConfirmation) {
+      setErrorMessage("新しいPINと確認用PINが一致しません。");
+      return;
+    }
+
+    if (currentPin === newPin) {
+      setErrorMessage("現在のPINとは異なるPINを設定してください。");
+      return;
+    }
+
+    const payload: ChangePinRequest = {
+      current_pin: currentPin,
+      new_pin: newPin,
+      new_pin_confirmation: newPinConfirmation,
+    };
+
     try {
       setLoading(true);
-      const res = await api.post("/staffs/change-pin", {
-        current_pin: currentPin,
-        new_pin: newPin,
-        new_pin_confirmation: newPinConfirmation,
-      });
+
+      const res = await api.post<ChangePinSuccessResponse>(
+        "/staffs/change-pin",
+        payload
+      );
+
       setSuccessMessage(res.data.message || "PINを変更しました。");
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         navigate("/staff-dashboard");
       }, 1000);
-    } catch (error: any) {
-      console.error("PIN変更エラー", error);
-      console.error("response", error.response);
-      console.error("data", error.response?.data);
+    } catch (error: unknown) {
+      console.error("PIN変更エラー:", error);
 
-      if (error.response?.status === 422) {
-        const errors = error.response.data.errors;
-        if (errors) {
-          const firstKey = Object.keys(errors)[0];
-          setErrorMessage(errors[firstKey][0]);
+      if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+        const status = error.response?.status;
+        const responseData = error.response?.data;
+
+        if (status === 422) {
+          const firstValidationError = getFirstValidationError(
+            responseData?.errors
+          );
+
+          if (firstValidationError) {
+            setErrorMessage(firstValidationError);
+            return;
+          }
+
+          setErrorMessage(responseData?.message || "入力内容に誤りがあります。");
           return;
         }
 
-        setErrorMessage(error.response.data.message || "PIN変更に失敗しました。");
+        if (status === 403) {
+          setErrorMessage(responseData?.message || "権限がありません。");
+          return;
+        }
+
+        if (status === 401) {
+          setErrorMessage(
+            responseData?.message || "認証が無効です。再度ログインしてください。"
+          );
+          return;
+        }
+
+        setErrorMessage(
+          responseData?.message || "PIN変更に失敗しました。"
+        );
         return;
       }
 
-      if (error.response?.status === 403) {
-        setErrorMessage(error.response.data.message || "権限がありません。");
-        return;
-      }
-
-      setErrorMessage(error.response?.data?.message || "PIN変更に失敗しました。");
+      setErrorMessage("予期しないエラーが発生しました。");
     } finally {
       setLoading(false);
     }
@@ -103,8 +177,12 @@ export default function StaffChangePinPage() {
           <TextField
             label="現在のPIN"
             value={currentPin}
-            onChange={(e) => setCurrentPin(e.target.value)}
-            inputProps={{ maxLength: 4 }}
+            onChange={(e) => setCurrentPin(normalizePin(e.target.value))}
+            inputProps={{
+              maxLength: 4,
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            }}
             type="password"
             fullWidth
           />
@@ -112,8 +190,12 @@ export default function StaffChangePinPage() {
           <TextField
             label="新しいPIN"
             value={newPin}
-            onChange={(e) => setNewPin(e.target.value)}
-            inputProps={{ maxLength: 4 }}
+            onChange={(e) => setNewPin(normalizePin(e.target.value))}
+            inputProps={{
+              maxLength: 4,
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            }}
             type="password"
             fullWidth
           />
@@ -121,8 +203,12 @@ export default function StaffChangePinPage() {
           <TextField
             label="新しいPIN（確認）"
             value={newPinConfirmation}
-            onChange={(e) => setNewPinConfirmation(e.target.value)}
-            inputProps={{ maxLength: 4 }}
+            onChange={(e) => setNewPinConfirmation(normalizePin(e.target.value))}
+            inputProps={{
+              maxLength: 4,
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            }}
             type="password"
             fullWidth
           />
@@ -140,3 +226,4 @@ export default function StaffChangePinPage() {
     </Container>
   );
 }
+

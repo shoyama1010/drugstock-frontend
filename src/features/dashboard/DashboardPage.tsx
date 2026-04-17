@@ -155,7 +155,7 @@ export default function Dashboard() {
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Typography variant="h4" fontWeight={600} gutterBottom sx={{ mb: 3 }}>
-        現在の商品在庫内容
+        現在の商品在庫状況
       </Typography>
 
       {loading && (
