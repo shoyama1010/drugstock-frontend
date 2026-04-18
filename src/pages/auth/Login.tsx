@@ -42,11 +42,15 @@ export default function Login() {
 
   const handleLogin = async (): Promise<void> => {
     setErrorMessage("");
-    // if (!email || !password) {
-    //   setErrorMessage("メールアドレスとパスワードを入力してください");
+    // if (!password) {
+    //   setError("パスワードを入力してください。");
     //   return;
     // }
 
+    // if (password.length < 8) {
+    //   setError("パスワードは8文字以上で入力してください。");
+    //   return;
+    // }
     try {
       setLoading(true);
 
@@ -135,7 +139,6 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             error={!!errorMessage && errorMessage.includes("メール")}
-            // helperText={errorMessage.includes("メール") ? errorMessage : ""}
           />
 
           <TextField
@@ -144,8 +147,8 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
+            inputProps={{ minLength: 8 }}      
             error={!!errorMessage && errorMessage.includes("パスワード")}
-            // helperText={errorMessage.includes("パスワード") ? errorMessage : ""}
           />
 
           <Button
@@ -170,3 +173,5 @@ export default function Login() {
 
   );
 }
+
+

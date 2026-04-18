@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import api from "../../api/clients";
 import {
   Box,
@@ -14,19 +15,17 @@ import {
   TableHead,
   TableRow,
   IconButton,
-} from "@mui/material";
-import { Add, Search, Edit, Delete } from "@mui/icons-material";
-
-import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Alert,
 } from "@mui/material";
+import { Add, Search, Edit, Delete } from "@mui/icons-material";
 
-// ✅ APIの型に合わせる
 interface Product {
   id: number;
+  code: string;
   name: string;
   sku: string;
   category_id: number;
@@ -35,23 +34,49 @@ interface Product {
   is_active: boolean;
 }
 
+type ProductForm = {
+  code: string;
+  name: string;
+  sku: string;
+  category_id: number;
+  unit_price: number;
+  min_stock: number;
+};
+
+type ProductFormErrors = {
+  code?: string;
+  name?: string;
+  sku?: string;
+  category_id?: string;
+  unit_price?: string;
+  min_stock?: string;
+  general?: string;
+};
+
+type ValidationErrorResponse = {
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
+const initialForm: ProductForm = {
+  code: "",
+  name: "",
+  sku: "",
+  category_id: 1,
+  unit_price: 0,
+  min_stock: 0,
+};
+
 export default function ProductManagementPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [open, setOpen] = useState(false); // 追加
-  const [form, setForm] = useState({ // 追加
-    code: "",
-    name: "",
-    sku: "",
-    category_id: 1,
-    unit_price: 0,
-    min_stock: 0,
-  });
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<ProductForm>(initialForm);
+  const [formErrors, setFormErrors] = useState<ProductFormErrors>({});
 
   const [editOpen, setEditOpen] = useState(false);
-
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState<Product & { code: string }>({
     id: 0,
     code: "",
     name: "",
@@ -59,63 +84,31 @@ export default function ProductManagementPage() {
     category_id: 1,
     unit_price: 0,
     min_stock: 0,
+    is_active: true,
   });
+  const [editErrors, setEditErrors] = useState<ProductFormErrors>({});
 
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  // ===============================
-  // ✅ 商品登録（追加）
-  // ===============================
-  const handleCreate = async () => {
-    console.log("クリックされた！");
+  const buildFieldErrors = (
+    errors?: Record<string, string[]>
+  ): ProductFormErrors => {
+    if (!errors) return {};
 
-    try {
-      const res = await api.post("/products", form);
-
-      console.log("登録成功", res.data);
-
-      // ✅ モーダル閉じる
-      setOpen(false); // ダイアログを閉じる
-
-      // ✅ フォーム初期化
-      setForm({
-        code: "",
-        name: "",
-        sku: "",
-        category_id: 1,
-        unit_price: 0,
-        min_stock: 0,
-      });
-
-      // 一覧再取得
-      fetchProducts();
-
-    } catch (err: any) {
-      console.error("登録失敗", err);
-
-      // ✅ Laravelバリデーションエラー表示
-      if (err.response?.data?.errors) {
-        const messages = Object.values(err.response.data.errors)
-          .flat()
-          .join("\n");
-
-        alert(messages);
-      } else {
-        alert("登録に失敗しました");
-      }
-    }
+    return {
+      code: errors.code?.[0],
+      name: errors.name?.[0],
+      sku: errors.sku?.[0],
+      category_id: errors.category_id?.[0],
+      unit_price: errors.unit_price?.[0],
+      min_stock: errors.min_stock?.[0],
+    };
   };
 
-  // ===============================
-  // ✅ 一覧取得（API）
-  // ===============================
-  const fetchProducts = async () => {
+  const fetchProducts = async (): Promise<void> => {
     try {
-      const res = await api.get("/products");
-      console.log("API取得:", res.data);
-      // Laravel paginate対応
-      // setProducts(res.data.data || []);
-      setProducts(res.data); // ←これだけ
+      const res = await api.get<Product[]>("/products");
+      setProducts(res.data);
     } catch (error) {
       console.error("取得失敗", error);
     }
@@ -125,8 +118,45 @@ export default function ProductManagementPage() {
     fetchProducts();
   }, []);
 
-  // 編集モーダル開く
-  const handleEditOpen = (product: Product) => {
+  const handleCreate = async (): Promise<void> => {
+    setFormErrors({});
+
+    try {
+      const res = await api.post<Product>("/products", form);
+      console.log("登録成功", res.data);
+
+      setOpen(false);
+      setForm(initialForm);
+      setFormErrors({});
+      fetchProducts();
+    } catch (error: unknown) {
+      console.error("登録失敗", error);
+
+      if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+        const status = error.response?.status;
+        const responseData = error.response?.data;
+
+        if (status === 422) {
+          setFormErrors({
+            ...buildFieldErrors(responseData?.errors),
+            general: responseData?.message,
+          });
+          return;
+        }
+
+        setFormErrors({
+          general: responseData?.message || "登録に失敗しました。",
+        });
+        return;
+      }
+
+      setFormErrors({
+        general: "登録に失敗しました。",
+      });
+    }
+  };
+
+  const handleEditOpen = (product: Product & { code: string }): void => {
     setEditForm({
       id: product.id,
       code: product.code,
@@ -135,128 +165,193 @@ export default function ProductManagementPage() {
       category_id: product.category_id,
       unit_price: product.unit_price,
       min_stock: product.min_stock,
+      is_active: product.is_active,
     });
 
+    setEditErrors({});
     setEditOpen(true);
   };
 
-  // 更新処理
-  const handleUpdate = async () => {
-    try {
-      await api.put(`/products/${editForm.id}`, editForm);
+  const handleUpdate = async (): Promise<void> => {
+    setEditErrors({});
 
-      alert("更新成功");
+    try {
+      const res = await api.put(`/products/${editForm.id}`, editForm);
+      console.log("更新成功", res.data);
 
       setEditOpen(false);
-
-      fetchProducts(); // ←これ絶対必要
-
-    } catch (error) {
+      setEditErrors({});
+      fetchProducts();
+    } catch (error: unknown) {
       console.error("更新失敗", error);
-      alert("更新失敗");
+
+      if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+        const status = error.response?.status;
+        const responseData = error.response?.data;
+
+        if (status === 422) {
+          setEditErrors({
+            ...buildFieldErrors(responseData?.errors),
+            general: responseData?.message,
+          });
+          return;
+        }
+
+        setEditErrors({
+          general: responseData?.message || "更新に失敗しました。",
+        });
+        return;
+      }
+
+      setEditErrors({
+        general: "更新に失敗しました。",
+      });
     }
   };
 
-  // ===============================
-  // ✅ 削除
-  // ===============================
-  const handleDelete = async (id: number) => {
-    console.log("削除ID:", id);
-
-    if (!confirm("削除しますか？")) return;
-
+  const handleDelete = async (id: number): Promise<void> => {
     try {
-      console.log("API実行前");
-      const res = await api.delete(`/products/${id}`);
-      console.log("削除成功", res);
-      
+      await api.delete(`/products/${id}`);
       fetchProducts();
+      setDeleteId(null);
     } catch (error) {
       console.error("削除失敗", error);
     }
   };
 
-  // ===============================
-  // 🔍 検索（フロント）
-  // ===============================
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredProducts = products.filter((product) => {
+    const keyword = searchQuery.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(keyword) ||
+      product.sku.toLowerCase().includes(keyword)
+    );
+  });
 
   return (
-    // 登録モーダル
     <Box>
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      {/* 登録モーダル */}
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setFormErrors({});
+        }}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>商品登録</DialogTitle>
 
         <DialogContent>
+          {formErrors.general && (
+            <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
+              {formErrors.general}
+            </Alert>
+          )}
+
           <TextField
             label="商品コード"
             value={form.code}
             onChange={(e) => setForm({ ...form, code: e.target.value })}
             fullWidth
             margin="dense"
+            error={!!formErrors.code}
+            helperText={formErrors.code || ""}
           />
 
           <TextField
             label="商品名"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
             fullWidth
             margin="dense"
-            value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
+            error={!!formErrors.name}
+            helperText={formErrors.name || ""}
           />
 
           <TextField
             label="SKU"
+            value={form.sku}
+            onChange={(e) => setForm({ ...form, sku: e.target.value })}
             fullWidth
             margin="dense"
-            value={form.sku}
+            error={!!formErrors.sku}
+            helperText={formErrors.sku || ""}
+          />
+
+          <TextField
+            label="カテゴリID"
+            type="number"
+            value={form.category_id}
             onChange={(e) =>
-              setForm({ ...form, sku: e.target.value })
+              setForm({ ...form, category_id: Number(e.target.value) })
             }
+            fullWidth
+            margin="dense"
+            error={!!formErrors.category_id}
+            helperText={formErrors.category_id || ""}
           />
 
           <TextField
             label="価格"
             type="number"
-            fullWidth
-            margin="dense"
             value={form.unit_price}
             onChange={(e) =>
               setForm({ ...form, unit_price: Number(e.target.value) })
             }
+            fullWidth
+            margin="dense"
+            error={!!formErrors.unit_price}
+            helperText={formErrors.unit_price || ""}
           />
 
           <TextField
             label="最小在庫"
             type="number"
-            fullWidth
-            margin="dense"
             value={form.min_stock}
             onChange={(e) =>
               setForm({ ...form, min_stock: Number(e.target.value) })
             }
+            fullWidth
+            margin="dense"
+            error={!!formErrors.min_stock}
+            helperText={formErrors.min_stock || ""}
           />
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>キャンセル</Button>
+          <Button
+            onClick={() => {
+              setOpen(false);
+              setFormErrors({});
+            }}
+          >
+            キャンセル
+          </Button>
           <Button onClick={handleCreate} variant="contained">
             登録
           </Button>
         </DialogActions>
       </Dialog>
 
-
       {/* 編集モーダル */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+      <Dialog
+        open={editOpen}
+        onClose={() => {
+          setEditOpen(false);
+          setEditErrors({});
+        }}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>商品編集</DialogTitle>
 
         <DialogContent>
+          {editErrors.general && (
+            <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
+              {editErrors.general}
+            </Alert>
+          )}
+
           <TextField
             label="商品コード"
             value={editForm.code}
@@ -265,6 +360,8 @@ export default function ProductManagementPage() {
             }
             fullWidth
             margin="dense"
+            error={!!editErrors.code}
+            helperText={editErrors.code || ""}
           />
 
           <TextField
@@ -275,6 +372,8 @@ export default function ProductManagementPage() {
             }
             fullWidth
             margin="dense"
+            error={!!editErrors.name}
+            helperText={editErrors.name || ""}
           />
 
           <TextField
@@ -285,6 +384,24 @@ export default function ProductManagementPage() {
             }
             fullWidth
             margin="dense"
+            error={!!editErrors.sku}
+            helperText={editErrors.sku || ""}
+          />
+
+          <TextField
+            label="カテゴリID"
+            type="number"
+            value={editForm.category_id}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                category_id: Number(e.target.value),
+              })
+            }
+            fullWidth
+            margin="dense"
+            error={!!editErrors.category_id}
+            helperText={editErrors.category_id || ""}
           />
 
           <TextField
@@ -299,6 +416,8 @@ export default function ProductManagementPage() {
             }
             fullWidth
             margin="dense"
+            error={!!editErrors.unit_price}
+            helperText={editErrors.unit_price || ""}
           />
 
           <TextField
@@ -313,30 +432,38 @@ export default function ProductManagementPage() {
             }
             fullWidth
             margin="dense"
+            error={!!editErrors.min_stock}
+            helperText={editErrors.min_stock || ""}
           />
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setEditOpen(false)}>キャンセル</Button>
+          <Button
+            onClick={() => {
+              setEditOpen(false);
+              setEditErrors({});
+            }}
+          >
+            キャンセル
+          </Button>
           <Button variant="contained" onClick={handleUpdate}>
             更新
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* 削除 */}
+      {/* 削除確認モーダル */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
         <DialogTitle>削除確認</DialogTitle>
         <DialogContent>本当に削除しますか？</DialogContent>
         <DialogActions>
-
           <Button onClick={() => setDeleteId(null)}>キャンセル</Button>
           <Button
             color="error"
             onClick={async () => {
-              await api.delete(`/products/${deleteId}`);
-              fetchProducts();
-              setDeleteId(null);
+              if (deleteId !== null) {
+                await handleDelete(deleteId);
+              }
             }}
           >
             削除
@@ -344,20 +471,19 @@ export default function ProductManagementPage() {
         </DialogActions>
       </Dialog>
 
-      {/* *************************************** */}
-      <Typography variant='h4' mb={2}>
+      <Typography variant="h4" mb={2}>
         商品管理
       </Typography>
 
-      {/* 🔍 検索 */}
+      {/* 検索 */}
       <TextField
         fullWidth
-        placeholder='商品名またはSKUで検索'
+        placeholder="商品名またはSKUで検索"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         InputProps={{
           startAdornment: (
-            <InputAdornment position='start'>
+            <InputAdornment position="start">
               <Search />
             </InputAdornment>
           ),
@@ -365,14 +491,21 @@ export default function ProductManagementPage() {
         sx={{ mb: 2 }}
       />
 
-      {/* ➕ 商品登録 */}
-      <Button variant='contained'
-        startIcon={<Add />} sx={{ mb: 2 }}
-        // onClick={handleCreate}>
-        onClick={() => setOpen(true)}>
+      {/* 商品登録ボタン */}
+      <Button
+        variant="contained"
+        startIcon={<Add />}
+        sx={{ mb: 2 }}
+        onClick={() => {
+          setForm(initialForm);
+          setFormErrors({});
+          setOpen(true);
+        }}
+      >
         商品登録
       </Button>
-      {/* 📦 テーブル */}
+
+      {/* テーブル */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -396,17 +529,16 @@ export default function ProductManagementPage() {
                 <TableCell>{product.category_id}</TableCell>
                 <TableCell>{product.unit_price}</TableCell>
                 <TableCell>{product.min_stock}</TableCell>
-
                 <TableCell>
-                  <IconButton color='primary'
+                  <IconButton
+                    color="primary"
                     onClick={() => handleEditOpen(product)}
                   >
                     <Edit />
                   </IconButton>
 
                   <IconButton
-                    color='error'
-                    // onClick={() => handleDelete(product.id)}
+                    color="error"
                     onClick={() => setDeleteId(product.id)}
                   >
                     <Delete />
@@ -418,6 +550,6 @@ export default function ProductManagementPage() {
         </Table>
       </TableContainer>
     </Box>
-
   );
 }
+
