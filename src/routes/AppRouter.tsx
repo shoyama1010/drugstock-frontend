@@ -15,6 +15,7 @@ import StaffManagementPage from "../features/staff/StaffManagementPage";
 import StaffDashboard from "../features/staff/StaffDashboard";
 import Reports from "../features/reports/Reports";
 import StaffChangePinPage from "../features/staff/StaffChangePinPage";
+import StaffLayout from "../components/layout/StaffLayout";
 
 // guard
 import { PrivateRoute } from "./PrivateRoute";
@@ -43,9 +44,12 @@ export default function AppRouter() {
       </Route>
       {/* 👷 スタッフ */}
       <Route element={<PrivateRoute role='staff' />}>
-        <Route path='/staff-dashboard' element={<StaffDashboard />} />
-        <Route path='/staff/change-pin' element={<StaffChangePinPage />} />
-        <Route path="/staff/stock-in" element={<StockInPage />} />
+        <Route element={<StaffLayout />}>
+          <Route path='/staff-dashboard' element={<StaffDashboard />} />
+          <Route path='/staff/change-pin' element={<StaffChangePinPage />} />
+          <Route path="/staff/stock-in" element={<StockInPage />} />
+          <Route path="/staff/stock-out" element={<StockOutPage />} />
+        </Route>
       </Route>
       {/* 🚨 fallback */}
       <Route path='*' element={<HomePage />} />

@@ -75,7 +75,7 @@ export default function StaffDashboard() {
             alignSelf: "center",
           }}
         >
-          🚧 近日開発中
+          🚧 開発中
         </Box>
 
         <Box
@@ -174,7 +174,8 @@ export default function StaffDashboard() {
                 bgcolor: "#ffebee",
               },
             }}
-            onClick={() => navigate("/staff/scan-out")}
+            // onClick={() => navigate("/staff/scan-out")}
+            onClick={() => navigate("/staff/stock-out")}
           >
             <Box
               sx={{

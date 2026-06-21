@@ -147,7 +147,7 @@ export default function Home() {
               gutterBottom
               sx={{ mb: 3 }}
             >
-              Drug store stock control
+              Drug store stock 
             </Typography>
             <Typography variant='h5' sx={{ mb: 5, opacity: 0.95 }}>
               医薬品・日用品の在庫をリアルタイムで管理
