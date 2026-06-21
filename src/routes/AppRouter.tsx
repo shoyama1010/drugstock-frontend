@@ -45,6 +45,7 @@ export default function AppRouter() {
       <Route element={<PrivateRoute role='staff' />}>
         <Route path='/staff-dashboard' element={<StaffDashboard />} />
         <Route path='/staff/change-pin' element={<StaffChangePinPage />} />
+        <Route path="/staff/stock-in" element={<StockInPage />} />
       </Route>
       {/* 🚨 fallback */}
       <Route path='*' element={<HomePage />} />

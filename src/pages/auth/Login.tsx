@@ -42,15 +42,7 @@ export default function Login() {
 
   const handleLogin = async (): Promise<void> => {
     setErrorMessage("");
-    // if (!password) {
-    //   setError("パスワードを入力してください。");
-    //   return;
-    // }
-
-    // if (password.length < 8) {
-    //   setError("パスワードは8文字以上で入力してください。");
-    //   return;
-    // }
+   
     try {
       setLoading(true);
 

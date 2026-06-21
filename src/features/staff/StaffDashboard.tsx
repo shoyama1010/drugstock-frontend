@@ -104,7 +104,8 @@ export default function StaffDashboard() {
                 bgcolor: "#f1f8e9",
               },
             }}
-            onClick={() => navigate("/staff/scan-in")}
+            // onClick={() => navigate("/staff/scan-in")}
+            onClick={() => navigate("/staff/stock-in")}
           >
             <Box
               sx={{
