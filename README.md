@@ -22,7 +22,7 @@ http://localhost:5173
 - TypeScript  
 - Vite
 - React Router
-- Tailwind css / MUI（Material UI）
+- MUI（Material UI）* Tailwind CSSは、一部(login.tsx)しか使ってません。
 
 ### API連携
 - Axios（APIクライアント）
