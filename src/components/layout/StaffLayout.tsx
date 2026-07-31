@@ -4,12 +4,6 @@ import { Box, Button, Typography } from "@mui/material";
 export default function StaffLayout() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/staff/login");
-  };
-
   return (
     <>
       <Box
@@ -41,9 +35,7 @@ export default function StaffLayout() {
           <Button onClick={() => navigate("/staff/stock-out")}>
             出庫
           </Button>
-          {/* <Button color="error" variant="outlined" onClick={handleLogout}>
-            ログアウト
-          </Button> */}
+          
         </Box>
       </Box>
 
