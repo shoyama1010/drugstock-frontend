@@ -17,10 +17,10 @@ import {
 
 // 例: 既存の axios インスタンスがある場合
 // import api from "../lib/api";
-// import api from "../api/client";
+import api from "../../api/clients";
 
 // まだ共通APIクライアントを使っていない場合は一時的に axios でもOK
-import axios from "axios";
+// import axios from "axios";
 
 interface StatCardProps {
   title: string;
@@ -96,18 +96,7 @@ export default function Dashboard() {
         setLoading(true);
         setError("");
 
-        // 共通の api クライアントがあるならそちらを優先してください
-        // const res = await api.get("/dashboard");
-
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get("http://localhost:8000/api/dashboard", {
-          headers: token
-            ? {
-              Authorization: `Bearer ${token}`,
-            }
-            : {},
-        });
+        const res = await api.get("/dashboard");
 
         setStats(res.data);
       } catch (err) {
@@ -120,6 +109,35 @@ export default function Dashboard() {
 
     fetchDashboardStats();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchDashboardStats = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError("");
+
+  //       // 共通の api クライアントがあるならそちらを優先してください
+  //       // const res = await api.get("/dashboard");
+  //       const token = localStorage.getItem("token");
+
+  //       // const res = await axios.get("http://localhost:8000/api/dashboard", {
+  //       await axios.get("https://drugs-stock-app-production.up.railway.app/api/dashboard", {
+  //         headers: token
+  //           ? {
+  //             Authorization: `Bearer ${token}`,
+  //           }
+  //           : {},
+  //       });
+  //       setStats(res.data);
+  //     } catch (err) {
+  //       console.error("ダッシュボード取得エラー:", err);
+  //       setError("ダッシュボード情報の取得に失敗しました。");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchDashboardStats();
+  // }, []);
 
   const displayStats = useMemo(() => {
     if (!stats) return [];
