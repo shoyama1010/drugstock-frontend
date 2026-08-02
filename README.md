@@ -103,8 +103,6 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
 　npm run dev 
 
-
-
 ## 工夫した点
 - ロール別認証（admin / staff）をフロント側で制御する理解
 - (app/router.tsxではなく) PrivateRoute による認証ガードの設定方法
@@ -122,9 +120,17 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 - 状態管理とルーティング制御の整合性を取るのが難しかったです。
 
 ■ APIエラー処理
-  422（バリデーション）・403（権限）など、ステータスごとの分岐処理とUI表示の実装に苦労しました。
+- 発生した課題：
+- API通信に失敗した場合、エラーの原因が入力内容、認証、権限、接続先、サーバー内部のどこにあるのか分かりにくい状態でした。
 
-■ 在庫データの整合性
+- 対応：
+- ブラウザのNetworkタブで次の項目を確認しました。
+
+「Request URL」「Request Method」「Request Payload」「Status Code」「Response」「Authorizationヘッダー」「CORS関連ヘッダー」
+
+そのうえで、401、403、422、500などのステータスごとに画面のメッセージを分けました。
+  
+■ ロットと棚を組み合わせた在庫表示
   ロット × 棚（location）という構造をフロントで扱う際に、データ構造の理解と表示ロジックの整理に時間がかかりました。
 
 ##  今後の改善予定
@@ -133,7 +139,7 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 - グラフ表示（在庫推移）
 - モバイル対応
 - コンポーネントの再利用性向上
-  
+- Vercelへ本番用環境変数を登録 
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
