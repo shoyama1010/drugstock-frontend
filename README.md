@@ -68,6 +68,16 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 - 入出庫履歴一覧表示
 - CSV出力
 
+### ■ スタッフ登録＆管理
+- スタッフ一覧表示
+- スタッフ登録
+- スタッフ詳細表示
+- スタッフ情報編集
+- スタッフ削除
+- 有効・無効状態の表示
+- 登録結果モーダル
+- 発行された社員番号・仮PINの表示
+
 <img width="1207" height="670" alt="Image" src="https://github.com/user-attachments/assets/eec7bb2b-5fc8-4123-b538-dd39db18ea1d" />
 
 <img width="1270" height="658" alt="Image" src="https://github.com/user-attachments/assets/dc849e94-d550-4250-87ba-c250fb0e0b32" />
@@ -83,6 +93,15 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 <img width="1271" height="660" alt="Image" src="https://github.com/user-attachments/assets/3947357e-c912-4290-bd35-5ad5f7ba22e4" />
 
 <img width="1301" height="673" alt="スクリーンショット (6262)" src="https://github.com/user-attachments/assets/0387d0a7-0517-4546-b889-334d8dd3ba86" />
+
+### スタッフの発行された社員番号・仮PINの表示について
+ローカル開発では、通常MailHogによる「メール通知」のみで知らせてましたが、今回本番のRailway＋Vercelで公開するにあたっては、
+
+RailwayがMailHogが使えないため、現行の機能を修正し、「スタッフ登録完了後、社員番号と仮PINを登録結果モーダルへ表示」を追加しました。
+
+ローカルでは、メール通知とモーダル画面、本番ではモーダル画面のみで、「社員番号と仮PIN」が見られます。
+
+＊登録フォームを閉じるだけでは重要な発行情報を見落とす可能性があるため、登録成功後の情報を独立したモーダルで確認できるようにしました。
 
 # 環境構築
 
