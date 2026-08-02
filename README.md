@@ -124,11 +124,12 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 - API通信に失敗した場合、エラーの原因が入力内容、認証、権限、接続先、サーバー内部のどこにあるのか分かりにくい状態でした。
 
 - 対応：
-- ブラウザのNetworkタブで次の項目を確認しました。
 
-「Request URL」「Request Method」「Request Payload」「Status Code」「Response」「Authorizationヘッダー」「CORS関連ヘッダー」
+   ブラウザのNetworkタブで次の項目を確認しました。
 
-そのうえで、401、403、422、500などのステータスごとに画面のメッセージを分けました。
+　　Request URL」「Request Method」「Request Payload」「Status Code」「Response」「Authorizationヘッダー」「CORS関連ヘッダー」
+
+  そのうえで、401、403、422、500などのステータスごとに画面のメッセージを分けました。
   
 ■ ロットと棚を組み合わせた在庫表示
   ロット × 棚（location）という構造をフロントで扱う際に、データ構造の理解と表示ロジックの整理に時間がかかりました。
