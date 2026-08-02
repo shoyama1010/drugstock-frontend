@@ -82,6 +82,8 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
 <img width="1271" height="660" alt="Image" src="https://github.com/user-attachments/assets/3947357e-c912-4290-bd35-5ad5f7ba22e4" />
 
+<img width="1301" height="673" alt="スクリーンショット (6262)" src="https://github.com/user-attachments/assets/0387d0a7-0517-4546-b889-334d8dd3ba86" />
+
 # 環境構築
 
 ## 1. リポジトリをクローン
