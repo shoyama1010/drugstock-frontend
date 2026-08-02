@@ -2,14 +2,20 @@
 
 ## アプリ概要（画面構成）
 
-- 医薬品卸倉庫の業務を想定した在庫管理システムのフロントエンドです。
-- 商品管理・入出庫・在庫状況・履歴確認をブラウザ上で操作できます。
+医薬品やドラッグストアなどの小売現場を想定した、商品・在庫・入出庫・スタッフ管理システムのフロントエンドです。
 
-・バックエンド（Laravel API）と連携し、リアルタイムに在庫を管理します。
+Laravel APIと連携したSPAとして構築して、リアルタイムに在庫を管理してます。
 
 ## アプリケーションURL
-
+### ローカルURL
 http://localhost:5173
+
+### デモ
+https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
+
+## 関連リポジトリ
+
+- バックエンドAPI： https://github.com/shoyama1010/drugs-stock-app
 
 ## 作成した目的
 
@@ -22,12 +28,14 @@ http://localhost:5173
 - TypeScript  
 - Vite
 - React Router
+- Axios
 - MUI（Material UI）* Tailwind CSSは、一部(login.tsx)しか使ってません。
+- Vercel
 
-### API連携
-- Axios（APIクライアント）
-- Laravel API（Sanctum認証）
+## 認証とAPI連携
 
+- ログイン成功時に取得したBearerトークンを保存し、
+- Axiosのリクエスト時にAuthorizationヘッダーへ設定しています。
 
 ## 機能一覧
 
