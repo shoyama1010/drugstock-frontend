@@ -93,9 +93,15 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
 　npm install
 
-## 3. 開発サーバー起動
+## 3.開発構築（ビルド）
 
-　npm run dev
+　npm run build
+
+## 4. 開発サーバー起動
+
+　npm run dev 
+
+
 
 ## 工夫した点
 - ロール別認証（admin / staff）をフロント側で制御する理解
