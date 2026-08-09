@@ -15,7 +15,7 @@ https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
 ## 関連リポジトリ
 
-- バックエンドAPI： https://github.com/shoyama1010/drugs-stock-app
+バックエンドAPI： https://github.com/shoyama1010/drugs-stock-app
 
 ## 作成した目的
 
