@@ -118,7 +118,7 @@ RailwayがMailHogが使えないため、現行の機能を修正し、「スタ
 
 　npm install
 
-## 3.開発構築（ビルド）
+## 3.開発構築
 
 　npm run build
 
@@ -148,11 +148,11 @@ RailwayがMailHogが使えないため、現行の機能を修正し、「スタ
 
 - 対応：
 
-   ブラウザのNetworkタブで次の項目を確認しました。
+ブラウザのNetworkタブで次の項目を確認しました。
 
-　　Request URL」「Request Method」「Request Payload」「Status Code」「Response」「Authorizationヘッダー」「CORS関連ヘッダー」
+Request URL」「Request Method」「Request Payload」「Status Code」「Response」「Authorizationヘッダー」「CORS関連ヘッダー」
 
-  そのうえで、401、403、422、500などのステータスごとに画面のメッセージを分けました。
+そのうえで、401、403、422、500などのステータスごとに画面のメッセージを分けました。
   
 ■ ロットと棚を組み合わせた在庫表示
   ロット × 棚（location）という構造をフロントで扱う際に、データ構造の理解と表示ロジックの整理に時間がかかりました。
