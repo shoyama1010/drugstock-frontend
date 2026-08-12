@@ -15,7 +15,6 @@ export default api;
 // 🔥 リクエスト時にトークン付与
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

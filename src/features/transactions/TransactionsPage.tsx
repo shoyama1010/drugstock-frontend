@@ -134,6 +134,7 @@ export default function Transactions() {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box display="flex" alignItems="center" mb={4}>
         <History sx={{ fontSize: 32, color: "#1976d2", mr: 1.5 }} />
+        
         <Typography variant="h4" fontWeight={600}>
           入出庫履歴
         </Typography>

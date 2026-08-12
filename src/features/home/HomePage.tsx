@@ -174,26 +174,7 @@ export default function Home() {
                 管理 ログイン
               </Button>
 
-              {/* <Button
-                component={Link}
-                to='/dashboard'
-                variant='outlined'
-                size='large'
-                sx={{
-                  borderColor: "#ffffff",
-                  color: "#ffffff",
-                  px: 4,
-                  py: 1.5,
-                  fontSize: "1.1rem",
-                  fontWeight: 600,
-                  "&:hover": {
-                    borderColor: "#ffffff",
-                    bgcolor: "rgba(255, 255, 255, 0.1)",
-                  },
-                }}
-              >
-                デモを見る
-              </Button> */}
+              
             </Box>
           </Box>
         </Container>

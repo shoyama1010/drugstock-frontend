@@ -471,7 +471,13 @@ export default function ProductManagementPage() {
         </DialogActions>
       </Dialog>
 
-      <Typography variant="h4" mb={2}>
+      {/* <Typography variant="h4" mb={2}> */}
+      <Typography
+        variant="h4"
+        fontWeight={600}
+        gutterBottom
+        sx={{ mb: 4 }}
+      >
         商品管理
       </Typography>
 

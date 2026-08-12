@@ -109,35 +109,7 @@ export default function Dashboard() {
 
     fetchDashboardStats();
   }, []);
-
-  // useEffect(() => {
-  //   const fetchDashboardStats = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError("");
-
-  //       // 共通の api クライアントがあるならそちらを優先してください
-  //       // const res = await api.get("/dashboard");
-  //       const token = localStorage.getItem("token");
-
-  //       // const res = await axios.get("http://localhost:8000/api/dashboard", {
-  //       await axios.get("https://drugs-stock-app-production.up.railway.app/api/dashboard", {
-  //         headers: token
-  //           ? {
-  //             Authorization: `Bearer ${token}`,
-  //           }
-  //           : {},
-  //       });
-  //       setStats(res.data);
-  //     } catch (err) {
-  //       console.error("ダッシュボード取得エラー:", err);
-  //       setError("ダッシュボード情報の取得に失敗しました。");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchDashboardStats();
-  // }, []);
+  
 
   const displayStats = useMemo(() => {
     if (!stats) return [];
