@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/clients";
-// import { SidebarLayout } from "../../components/layout/SidebarLayout";
 import {
   Box,
   Container,
@@ -37,9 +37,9 @@ interface StockItem {
   updated_at?: string;
 }
 
-
-
 export default function StockManagement() {
+  const navigate = useNavigate();
+
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
@@ -284,11 +284,13 @@ export default function StockManagement() {
                       <TableCell align='center'>
                         {/* 入庫 */}
                         <Box display='flex' gap={1} justifyContent='center'>
+                          
                           <Button
                             variant='outlined'
                             size='small'
                             startIcon={<ArrowDownward />}
-                            disabled={item.total_stock === 0}
+                            onClick={() => navigate("/stock-in")}
+                            // disabled={item.total_stock === 0}
                             sx={{
                               minWidth: 90,
                               color: "#2e7d32",
@@ -305,12 +307,14 @@ export default function StockManagement() {
                           >
                             入庫
                           </Button>
+
                           {/* 出庫 */}
                           <Button
                             variant='outlined'
                             size='small'
                             startIcon={<ArrowUpward />}
-                            disabled={item.total_stock === 0}
+                            onClick={() => navigate("/stock-out")}
+                            // disabled={item.total_stock === 0}
                             sx={{
                               minWidth: 90,
                               color: "#d32f2f",
@@ -327,6 +331,7 @@ export default function StockManagement() {
                           >
                             出庫
                           </Button>
+
                         </Box>
                       </TableCell>
                     </TableRow>
