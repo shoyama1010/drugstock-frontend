@@ -158,12 +158,11 @@ Request URL」「Request Method」「Request Payload」「Status Code」「Respo
   ロット × 棚（location）という構造をフロントで扱う際に、データ構造の理解と表示ロジックの整理に時間がかかりました。
 
 ##  今後の改善予定
+- スタッフ入出庫機能の改善によるバックエンド側と合わせて、画面構成もスタッフ用ルート及び権限制御（adminかstaffかの）を追加予定
 - フォームバリデーションの統一（React Hook Form導入）
 - UIのさらなる改善（入力補助・UX向上）
-- グラフ表示（在庫推移）
+- レポート機能表示（在庫グラフ推移）
 - モバイル対応
-- コンポーネントの再利用性向上
-- Vercelへ本番用環境変数を登録 
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
