@@ -21,6 +21,12 @@ http://localhost:5173
 ### デモ
 https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
+下記でお試しください。
+
+管理ログイン：admin@example.com、パスワード：password
+
+スタッフログイン：EMP○○○○（スタッフ登録時の社員番号）、PIN番号：スタッフ登録時のPIN
+
 ## 関連リポジトリ
 
 バックエンドAPI： https://github.com/shoyama1010/drugs-stock-app
