@@ -18,7 +18,7 @@ APIを介したデータ取得・更新、認証、ロール別の画面制御�
 ### ローカルURL
 http://localhost:5173
 
-## デモ
+## 公開デモ
 https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app
 
 ### 管理ログイン
