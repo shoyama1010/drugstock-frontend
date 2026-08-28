@@ -23,7 +23,7 @@ https://drugstock-frontend-9pp2.vercel.app/
 
 ＊ 以前は下記URLでしたが、再デプロイの関係上、古いURLとなってます。
 
-（https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app）
+（https://drugstock-frontend-dh9jracrs-shoyama1010s-projects.vercel.app ）
 
 ### 管理ログイン
 - メールアドレス：admin@example.com
