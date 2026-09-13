@@ -512,8 +512,13 @@ export default function ProductManagementPage() {
       </Button>
 
       {/* テーブル */}
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer component={Paper}
+        sx={{
+          overflowX: "auto",
+        }}>
+        <Table sx={{
+          minWidth: 700,
+        }}>
           <TableHead>
             <TableRow>
               <TableCell>商品コード</TableCell>
