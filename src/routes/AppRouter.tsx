@@ -16,6 +16,8 @@ import StaffDashboard from "../features/staff/StaffDashboard";
 import Reports from "../features/reports/Reports";
 import StaffChangePinPage from "../features/staff/StaffChangePinPage";
 import StaffLayout from "../components/layout/StaffLayout";
+import ShipmentManagementPage from "../features/shipments/ShipmentManagementPage";
+import ShipmentSlipPage from "../features/shipments/ShipmentSlipPage";
 
 // guard
 import { PrivateRoute } from "./PrivateRoute";
@@ -39,6 +41,8 @@ export default function AppRouter() {
           <Route path='/stock-out' element={<StockOutPage />} />
           <Route path='/staff-management' element={<StaffManagementPage />} />
           <Route path='/reports' element={<Reports />} />
+          <Route path='/shipments' element={<ShipmentManagementPage />} />
+          <Route path='/shipments/:id/slip' element={<ShipmentSlipPage />} />
           {/* <Route path="/stock/:shelf" element={<StockDetailPage />} /> */}
         </Route>
       </Route>
@@ -49,6 +53,11 @@ export default function AppRouter() {
           <Route path='/staff/change-pin' element={<StaffChangePinPage />} />
           <Route path="/staff/stock-in" element={<StockInPage />} />
           <Route path="/staff/stock-out" element={<StockOutPage />} />
+          <Route
+            path="/staff/shipments"
+            element={<ShipmentManagementPage staffMode />}
+          />
+          <Route path="/staff/shipments/:id/slip" element={<ShipmentSlipPage />} />
         </Route>
       </Route>
       {/* 🚨 fallback */}

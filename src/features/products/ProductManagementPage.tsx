@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogActions,
   Alert,
+  Chip,
 } from "@mui/material";
 import { Add, Search, Edit, Delete } from "@mui/icons-material";
 
@@ -454,8 +455,8 @@ export default function ProductManagementPage() {
 
       {/* 削除確認モーダル */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
-        <DialogTitle>削除確認</DialogTitle>
-        <DialogContent>本当に削除しますか？</DialogContent>
+        <DialogTitle>商品無効化の確認</DialogTitle>
+        <DialogContent>この商品を無効化しますか？過去の履歴は保持されます。</DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteId(null)}>キャンセル</Button>
           <Button
@@ -466,7 +467,7 @@ export default function ProductManagementPage() {
               }
             }}
           >
-            削除
+            無効化
           </Button>
         </DialogActions>
       </Dialog>
@@ -527,6 +528,7 @@ export default function ProductManagementPage() {
               <TableCell>カテゴリ</TableCell>
               <TableCell>価格</TableCell>
               <TableCell>最小在庫</TableCell>
+              <TableCell>状態</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
           </TableHead>
@@ -541,6 +543,13 @@ export default function ProductManagementPage() {
                 <TableCell>{product.unit_price}</TableCell>
                 <TableCell>{product.min_stock}</TableCell>
                 <TableCell>
+                  <Chip
+                    size="small"
+                    color={product.is_active ? "success" : "default"}
+                    label={product.is_active ? "有効" : "無効"}
+                  />
+                </TableCell>
+                <TableCell>
                   <IconButton
                     color="primary"
                     onClick={() => handleEditOpen(product)}
@@ -550,6 +559,7 @@ export default function ProductManagementPage() {
 
                   <IconButton
                     color="error"
+                    disabled={!product.is_active}
                     onClick={() => setDeleteId(product.id)}
                   >
                     <Delete />

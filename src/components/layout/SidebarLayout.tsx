@@ -25,6 +25,7 @@ import {
   ArrowDownward,
   ArrowUpward,
   People,
+  LocalShipping,
   Menu as MenuIcon,
 } from "@mui/icons-material";
 
@@ -64,6 +65,11 @@ export default function SidebarLayout() {
       text: "入庫処理",
       icon: <ArrowDownward />,
       path: "/stock-in",
+    },
+    {
+      text: "店舗配送・出荷",
+      icon: <LocalShipping />,
+      path: "/shipments",
     },
     {
       text: "出庫処理",

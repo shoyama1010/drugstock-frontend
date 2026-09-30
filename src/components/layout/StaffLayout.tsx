@@ -20,7 +20,7 @@ export default function StaffLayout() {
         <Typography
           fontWeight={700}
           sx={{ cursor: "pointer" }}
-          onClick={() => navigate("/staff/dashboard")}
+          onClick={() => navigate("/staff-dashboard")}
         >
           DrugStore Stock / スタッフ
         </Typography>
@@ -34,6 +34,9 @@ export default function StaffLayout() {
           </Button>
           <Button onClick={() => navigate("/staff/stock-out")}>
             出庫
+          </Button>
+          <Button onClick={() => navigate("/staff/shipments")}>
+            出荷
           </Button>
           
         </Box>
